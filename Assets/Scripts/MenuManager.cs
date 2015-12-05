@@ -8,7 +8,11 @@ public class MenuManager : MonoBehaviour
 
 	void Start ()
 	{
-		ShowMenu (currentMenu); // For showing the main menu 
+		// For showing the main menu
+		ShowMenu (currentMenu);  
+		//setting up GameManager
+		DontDestroyOnLoad(GameManager.Instance);
+		GameManager.Instance.Initialize(); 
 	}
 	// Activate the given menu and deactivate the current 
 	// Invokable by the Inspector
@@ -33,5 +37,6 @@ public class MenuManager : MonoBehaviour
 		currentMenu = null;
 		Application.LoadLevel (level);
 	}
+	
 
 }
