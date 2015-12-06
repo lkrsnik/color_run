@@ -22,6 +22,11 @@ public class GameManager : MonoBehaviour {
 	public float area1;
 	public float area2;
 
+	// Assigns a material named "Assets/Resources/blueSmiley" to the object.
+	Material blueMat = Resources.Load("blueSmiley", typeof(Material)) as Material;
+	Material redMat = Resources.Load("redSmiley", typeof(Material)) as Material;
+
+
 //	public PlayerData[] playerDatas = new PlayerData[4];
 
 
@@ -56,12 +61,32 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	public static GameObject p1;
 
 	public void ResetLevel(){
 		timerInSeconds = 0.0f;
 		area1 = 0.12345f;
 
-//		playerDA p1 = gameObject.AddComponent<playerDA>;
+		//setup material
+		Debug.Log ("Color1: " + color1);
+		Debug.Log ("Color2: " + color2);
+
+
+		//get sphere objects
+		Debug.Log (GameObject.FindGameObjectWithTag ("Player1"));
+//		Debug.Log (GameObject.Find("Player1"));
+
+//		p1 = GameObject.FindGameObjectWithTag ("Player1");
+//		p1 = GameObject.Find ("Player1");
+//		Debug.Log ("P1: " + p1.ToString());
+
+//		Renderer rend = p1.GetComponent<Renderer> ();
+//		rend.material = redMat;
+
+		//p1.renderer.material = blueMat;
+
+
+		//		playerDA p1 = gameObject.AddComponent<playerDA>;
 //		p1.color = 1;
 
 
@@ -74,6 +99,7 @@ public class GameManager : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
+
 
 	}
 	

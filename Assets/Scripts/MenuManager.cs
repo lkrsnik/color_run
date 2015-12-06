@@ -85,6 +85,13 @@ public class MenuManager : MonoBehaviour
 		Debug.Log ("Yellow Selected");
 	}
 
+	public void SetMaterials(){
+		Debug.Log (GameObject.FindGameObjectWithTag ("Player1"));
+		Debug.Log ("setmat");
+	}
+
+
+
 
 	
 
