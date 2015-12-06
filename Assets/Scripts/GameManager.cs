@@ -13,10 +13,15 @@ public class GameManager : MonoBehaviour {
 	public int nOfPlayers;
 
 	public string name1;
-	public int color1;
-	public float area1;
+	public string name2;
 
-	public Player[] players;
+	public int color1;
+	public int color2;
+
+	public float area1;
+	public float area2;
+
+//	public PlayerData[] playerDatas = new PlayerData[4];
 
 
 	// Creates an instance of Gamemanager as a gameobject if an instance does not exist
@@ -26,11 +31,8 @@ public class GameManager : MonoBehaviour {
 		{
 			if(instance == null)
 			{
-//				Component obj = GameObject.GetComponent<GameManager>();
-//				instance = new GameObject("GameManagerObj").AddComponent(obj);
 				instance = new GameObject("GameManagerObj").AddComponent<GameManager> ();
 				instance.GetComponent<GameManager>().enabled = true;
-//				GameManager.GetComponentInChildren<GameManagerObj>().enabled = true;
 
 			}
 			
@@ -57,8 +59,17 @@ public class GameManager : MonoBehaviour {
 	public void ResetLevel(){
 		timerInSeconds = 0.0f;
 		area1 = 0.12345f;
-		players [0].name = "p1";
-		players [1].name = "p2";
+
+//		playerDA p1 = gameObject.AddComponent<playerDA>;
+//		p1.color = 1;
+
+
+//		PlayerData p1 = gameObject.AddComponent<PlayerData>();
+//		PlayerData p2 = gameObject.AddComponent<PlayerData>();
+//		playerDatas [0] = p1;
+//		playerDatas [1] = p2;
+//		playerDatas [0].name = "p1";
+//		playerDatas [1].name = "p2";
 	}
 	// Use this for initialization
 	void Start () {
@@ -71,5 +82,12 @@ public class GameManager : MonoBehaviour {
 		minutes = (int)(timerInSeconds / 60f);
 		secondsInMinute = (int)(timerInSeconds % 60f);
 	}
+
+//	public class playerDA{
+//		public int id;
+//		public int color;
+//		public string name;
+//		public float areaColored;
+//	}
 
 }

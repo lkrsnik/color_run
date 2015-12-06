@@ -1,24 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour {
+
+
+public class PlayerData  : MonoBehaviour {
 
 	public int id;
 	public int color;
 	public string name;
 	public float areaColored;
 
-	void Awake(){
-		areaColored = 0.0f;
-		name = "p1";
-	}
-	// Use this for initialization
-	void Start () {
+	//Material material = Resources.Load("redSmiley", typeof(Material)) as Material;
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
