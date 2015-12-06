@@ -12,13 +12,13 @@ public class GameLogic : MonoBehaviour {
 	bool[,] activePath;
 	
 	static int fieldSize = 100;
-	float fieldStartPosX;
-	float fieldStartPosZ;
+	int fieldStartPosX;
+	int fieldStartPosZ;
 	//float fieldStartPosX = fieldStart.transform.position.x;
 	//float fieldStartPosZ = fieldStart.transform.position.z;
 	//26.1;
-	//float fieldEndPosX;// = 48.71;
-	//float fieldEndPosZ;// = 123.19;
+	int fieldEndPosX;// = 48.71;
+	int fieldEndPosZ;// = 123.19;
 
 	float unitSizeX;
 	float unitSizeZ;
@@ -31,21 +31,38 @@ public class GameLogic : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		fieldStartPosX = fieldStart.transform.position.x;
-		fieldStartPosZ = fieldStart.transform.position.z;
+		fieldStartPosX = (int) fieldStart.transform.position.x;
+		fieldStartPosZ = (int) fieldStart.transform.position.z;
 
-		//fieldEndPosX = fieldEnd.transform.position.x;
-		//fieldEndPosZ = fieldEnd.transform.position.z;
+		fieldEndPosX = (int) fieldEnd.transform.position.x;
+		fieldEndPosZ = (int) fieldEnd.transform.position.z;
 
-		unitSizeX = (fieldEnd.transform.position.x - fieldStartPosX) / fieldSize;
-		unitSizeZ = (fieldEnd.transform.position.z - fieldStartPosZ) / fieldSize;
-		print (unitSizeX + " || " + unitSizeZ);
+		//unitSizeX = (fieldEnd.transform.position.x - fieldStartPosX) / fieldSize;
+		//unitSizeZ = (fieldEnd.transform.position.z - fieldStartPosZ) / fieldSize;
+		//print (unitSizeX + " || " + unitSizeZ);
 
 
 		tData = Terrain.activeTerrain.terrainData;
 		
 		alphaData = tData.GetAlphamaps(0, 0, tData.alphamapWidth, tData.alphamapHeight);
+
+		//for (int i = fieldStartPosX; i < alphaData.GetLength(0)-fieldEndPosX; i++)
+		//	for (int j = fieldStartPosZ; j < alphaData.GetLength(1)-fieldEndPosZ; j++) 
+		for (int i = 205; i < 305; i++)
+			for (int j = 205; j < 305; j++) 
+		{
+			
+			
+			alphaData[i,j,0] = 0;
+			alphaData[i,j,1] = 1;
+			alphaData[i,j,2] = 0;
+			
+		}	
 		
+		tData.SetAlphamaps(0, 0, alphaData);
+
+		print (tData.alphamapHeight);
+		print (tData.alphamapWidth);
 		//SetPercentage(0);
 
 		//print (fieldStartPosX + " || " + fieldStart.transform.position.z);
