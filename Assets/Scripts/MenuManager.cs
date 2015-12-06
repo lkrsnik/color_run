@@ -40,6 +40,52 @@ public class MenuManager : MonoBehaviour
 		GameManager.instance.ResetLevel ();
 
 	}
+
+	public void GetInput1(string playerName1){
+		GameManager.instance.name1 = playerName1;
+		Debug.Log ("Name player 1: " + playerName1);
+	}
+
+	public void GetInput2(string playerName2){
+		GameManager.instance.name2 = playerName2;
+		Debug.Log ("Name player 2: " + playerName2);
+	}
+
+	public void ColorSelected1Blue(){
+		GameManager.instance.color1 = 0;
+		Debug.Log ("Blue Selected");
+	}
+	public void ColorSelected1Red(){
+		GameManager.instance.color1 = 1;
+		Debug.Log ("Red Selected");
+	}
+	public void ColorSelected1Green(){
+		GameManager.instance.color1 = 2;
+		Debug.Log ("Green Selected");
+	}
+	public void ColorSelected1Yellow(){
+		GameManager.instance.color1 = 3;
+		Debug.Log ("Yellow Selected");
+	}
+
+	public void ColorSelected2Blue(){
+		GameManager.instance.color2 = 0;
+		Debug.Log ("Blue Selected");
+	}
+	public void ColorSelected2Red(){
+		GameManager.instance.color2 = 1;
+		Debug.Log ("Red Selected");
+	}
+	public void ColorSelected2Green(){
+		GameManager.instance.color2 = 2;
+		Debug.Log ("Green Selected");
+	}
+	public void ColorSelected2Yellow(){
+		GameManager.instance.color2 = 3;
+		Debug.Log ("Yellow Selected");
+	}
+
+
 	
 
 }

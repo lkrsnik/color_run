@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
 	public string name1;
 	public string name2;
 
+	// colors => 0 = blue, 1 = red, 2 = green, 3 = yellow
 	public int color1;
 	public int color2;
 
