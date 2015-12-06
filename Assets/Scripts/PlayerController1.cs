@@ -6,6 +6,10 @@ public class PlayerController1 : MonoBehaviour {
 	public float speed;
 	private Rigidbody rb;
 
+	void Awake() {
+		DontDestroyOnLoad(transform.gameObject);
+	}
+
 	void Start()
 	{
 		rb = GetComponent<Rigidbody> ();

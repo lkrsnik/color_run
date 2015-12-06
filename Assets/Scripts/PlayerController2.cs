@@ -5,6 +5,10 @@ public class PlayerController2 : MonoBehaviour {
 	
 	public float speed;
 	private Rigidbody rb;
+
+	void Awake() {
+		DontDestroyOnLoad(transform.gameObject);
+	}
 	
 	void Start()
 	{

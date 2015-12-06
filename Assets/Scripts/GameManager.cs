@@ -25,6 +25,13 @@ public class GameManager : MonoBehaviour {
 	// Assigns a material named "Assets/Resources/blueSmiley" to the object.
 	Material blueMat = Resources.Load("blueSmiley", typeof(Material)) as Material;
 	Material redMat = Resources.Load("redSmiley", typeof(Material)) as Material;
+	Material greenMat = Resources.Load("greenSmiley", typeof(Material)) as Material;
+	Material yellowMat = Resources.Load("yellowSmiley", typeof(Material)) as Material;
+
+	Material blueTrailMat = Resources.Load("blueTrail", typeof(Material)) as Material;
+	Material redTrailMat = Resources.Load("redTrail", typeof(Material)) as Material;
+	Material greenTrailMat = Resources.Load("greenTrail", typeof(Material)) as Material;
+	Material yellowTrailMat = Resources.Load("yellowTrail", typeof(Material)) as Material;
 
 
 //	public PlayerData[] playerDatas = new PlayerData[4];
@@ -61,7 +68,7 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	public static GameObject p1;
+//	public static GameObject p1;
 
 	public void ResetLevel(){
 		timerInSeconds = 0.0f;
@@ -73,7 +80,7 @@ public class GameManager : MonoBehaviour {
 
 
 		//get sphere objects
-		Debug.Log (GameObject.FindGameObjectWithTag ("Player1"));
+		//Debug.Log (GameObject.FindGameObjectWithTag ("Player1"));
 //		Debug.Log (GameObject.Find("Player1"));
 
 //		p1 = GameObject.FindGameObjectWithTag ("Player1");
@@ -102,19 +109,87 @@ public class GameManager : MonoBehaviour {
 
 
 	}
-	
+
+	bool set = false;
 	// Update is called once per frame
 	void Update () {
+		//update timer 
 		timerInSeconds += Time.deltaTime;
 		minutes = (int)(timerInSeconds / 60f);
 		secondsInMinute = (int)(timerInSeconds % 60f);
+
+		//find player spheres
+		if (GameObject.FindGameObjectWithTag ("Player1") && GameObject.FindGameObjectWithTag ("Player2") && !set) {
+			SetMaterial1();
+			SetMaterial2();
+			set = true;
+		}
+
+
+
 	}
 
-//	public class playerDA{
-//		public int id;
-//		public int color;
-//		public string name;
-//		public float areaColored;
-//	}
+	void SetMaterial1(){
+		Debug.Log ("setting material 1");
+
+		GameObject p1 = GameObject.FindGameObjectWithTag ("Player1");
+		Renderer renderer = p1.GetComponent<Renderer> ();
+		TrailRenderer trenderer = p1.GetComponent<TrailRenderer> ();
+
+		switch (color1) {
+		case 0:
+			renderer.material = blueMat;
+			trenderer.material = blueTrailMat;
+			break;
+		case 1:
+			renderer.material = redMat;
+			trenderer.material = redTrailMat;
+			break;
+		case 2:
+			renderer.material = greenMat;
+			trenderer.material = greenTrailMat;
+			break;
+		case 3:
+			renderer.material = yellowMat;
+			trenderer.material = yellowTrailMat;
+			break;
+		default:
+			Debug.Log ("wrong material!");
+			break;
+		}
+
+	}
+
+	void SetMaterial2(){
+		Debug.Log ("setting material 2");
+		
+		GameObject p2 = GameObject.FindGameObjectWithTag ("Player2");
+		Renderer renderer = p2.GetComponent<Renderer> ();
+		TrailRenderer trenderer = p2.GetComponent<TrailRenderer> ();
+		
+		switch (color2) {
+		case 0:
+			renderer.material = blueMat;
+			trenderer.material = blueTrailMat;
+			break;
+		case 1:
+			renderer.material = redMat;
+			trenderer.material = redTrailMat;
+			break;
+		case 2:
+			renderer.material = greenMat;
+			trenderer.material = greenTrailMat;
+			break;
+		case 3:
+			renderer.material = yellowMat;
+			trenderer.material = yellowTrailMat;
+			break;
+		default:
+			Debug.Log ("wrong material!");
+			break;
+		}
+		
+	}
+
 
 }
