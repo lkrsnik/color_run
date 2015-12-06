@@ -12,7 +12,6 @@ public class MenuManager : MonoBehaviour
 		ShowMenu (currentMenu);  
 		//setting up GameManager
 		DontDestroyOnLoad(GameManager.Instance);
-		GameManager.Instance.Initialize(); 
 	}
 	// Activate the given menu and deactivate the current 
 	// Invokable by the Inspector
@@ -36,6 +35,10 @@ public class MenuManager : MonoBehaviour
 			currentMenu.IsOpen = false;
 		currentMenu = null;
 		Application.LoadLevel (level);
+
+		// reset level properties 
+		GameManager.instance.ResetLevel ();
+
 	}
 	
 

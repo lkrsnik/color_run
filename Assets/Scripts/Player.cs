@@ -3,18 +3,22 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
-//	public int id;
-//	public string color;
-//	public double areaColored;
-//
-//
-//	// Use this for initialization
-//	void Start () {
-//		areaColored = 0;
-//	}
-//	
-//	// Update is called once per frame
-//	void Update () {
-//		
-//	}
+	public int id;
+	public int color;
+	public string name;
+	public float areaColored;
+
+	void Awake(){
+		areaColored = 0.0f;
+		name = "p1";
+	}
+	// Use this for initialization
+	void Start () {
+
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
 }
