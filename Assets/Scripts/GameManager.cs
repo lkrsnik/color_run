@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
 	public static GameManager instance;
 	//properties
 
+	public float startTime = 2*60;
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
@@ -61,14 +62,14 @@ public class GameManager : MonoBehaviour {
 
 	void Awake(){
 
-		timerInSeconds = 0.0f;
+		timerInSeconds = startTime;
 
 	}
 
 //	public static GameObject p1;
 
 	public void ResetLevel(){
-		timerInSeconds = 0.0f;
+		timerInSeconds = startTime;
 		area1 = 0.0f;
 		area2 = 0.0f;
 
@@ -112,7 +113,7 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//update timer 
-		timerInSeconds += Time.deltaTime;
+		timerInSeconds -= Time.deltaTime;
 		minutes = (int)(timerInSeconds / 60f);
 		secondsInMinute = (int)(timerInSeconds % 60f);
 
