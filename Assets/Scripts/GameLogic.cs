@@ -53,8 +53,78 @@ public class TreeSet
 			array[i,1] = curr.coordinates[1];
 			curr = curr.next();
 		}
+		//printArray (array);
 		return array;
 	}
+	public int[,] toOrderedArray(){
+		//Debug.Log ("HEREEEEEE1!!!");
+		int length = this.length ();
+		int [,] array = new int [length, 2];
+		TreeSet curr = this.cloneCoord();
+//		Debug.Log (this.print (""));
+//		Debug.Log (curr.print (""));
+		for (int i = 0; i < length; i++) {
+			TreeSet minAncestor = curr.findMinAncestor();
+			array[i,0] = minAncestor.coordinates[0];
+			array[i,1] = minAncestor.coordinates[1];
+			curr = curr.eraseNode(minAncestor);
+		}
+		//printArray (array);
+		//print (this.findMinAncestor().coordinates[0] + " || " + this.findMinAncestor().coordinates[1]);
+		return array;
+	}
+	private void printArray(int[,] arr){
+		string etext = "";
+		for (int i = 0; i < arr.GetLength(0); i++) {
+			etext += arr[i,0] + " : " + arr [i,1] + " || ";
+		}
+		Debug.Log (etext);
+	}
+	private TreeSet cloneCoord(){
+		TreeSet clone = new TreeSet (new int[]{ this.coordinates[0], this.coordinates[1] }, null, 0);
+		TreeSet curr = this;
+		TreeSet temp = clone;
+		int length = this.length ();
+		for (int i = 0; i < length; i++) {
+			if (curr.son != null)
+				temp.son = new TreeSet (new int[]{ curr.son.coordinates[0], curr.son.coordinates[1] }, null, 0);
+			temp = temp.next();
+			curr = curr.next();
+		}
+		return clone;
+	}
+
+	private TreeSet eraseNode(TreeSet node){
+		if (this == node)
+			return this.son;
+
+		TreeSet curr = this;
+		int length = this.length ();
+		for (int i = 0; i < length; i++) {
+			if (curr.son == node){
+				curr.son = curr.son.son;
+				break;
+			}
+			curr = curr.next();
+		}
+		return this;
+
+	}
+	private TreeSet findMinAncestor(){
+		TreeSet minNode = new TreeSet (new int[]{ 100, 100 }, null, 0);
+		TreeSet curr = this;
+		int length = this.length ();
+		for (int i = 0; i < length; i++) {
+			if (curr.coordinates[0]<minNode.coordinates[0] || (curr.coordinates[0] == minNode.coordinates[0] && curr.coordinates[1]<minNode.coordinates[1])){
+				minNode = curr;
+			}
+			curr = curr.next();
+		}
+		return minNode;
+	}
+//	private TreeSet eraseNode(TreeSet node){
+//
+//	}
 	private TreeSet next(){
 		return this.son;
 	}
@@ -189,9 +259,13 @@ public class GameLogic : MonoBehaviour {
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
 					TreeSet res = activePath[k].getBorder();
-					print(res.print (""));
-					print(res.toArray()[0,0] + " : " + res.toArray()[0,1] + " || " + res.toArray()[res.length() - 1,0] + " : " + res.toArray()[res.length() - 1,1]);
-					setCoordinates(res.toArray(), 3);
+					//print(res.print (""));
+					//print(res.toArray()[0,0] + " : " + res.toArray()[0,1] + " || " + res.toArray()[res.length() - 1,0] + " : " + res.toArray()[res.length() - 1,1]);
+					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
+					res.toArray();
+					res.toOrderedArray();
+					setCoordinates(res.toOrderedArray(), 3);
+					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
 				pos[k,1] = nPos[1];
@@ -200,12 +274,19 @@ public class GameLogic : MonoBehaviour {
 				
 			k++;
 		}
+		applyPercantage ();
 		applyCoordinates ();
+
+	}
+
+	void applyPercantage(){
 
 	}
 
 	void applyCoordinates ()
 	{
+		float area1 = 0;
+		float area2 = 0;
 		for (int i = 0; i < coordinates.GetLength(0); i++)
 			for (int j = 0; j < coordinates.GetLength(1); j++) 
 		{
@@ -213,9 +294,19 @@ public class GameLogic : MonoBehaviour {
 			{			
 				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,1] = 0;
 				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
+				if (coordinates[i,j] == 2)
+					area1++;
+				else if (coordinates[i,j] == 3)
+					area2++;
 			}
 			
 		}	
+
+		if (GameManager.instance != null) {
+			GameManager.instance.area1 = area1;
+			GameManager.instance.area2 = area2;
+		}
+
 		
 		tData.SetAlphamaps (0, 0, alphaData);
 	}
@@ -241,11 +332,11 @@ public class GameLogic : MonoBehaviour {
 						if (borderPoints % 2 == 0) {
 							coordinates [i, j] = mark;
 							flag = false;
-							print ("HERE");
+//							print ("HERE");
 						} else {
 							coordinates [i, j] = mark;
 							flag = true;
-							print ("NOOO");
+//							print ("NOOO");
 						}
 					}
 				}
