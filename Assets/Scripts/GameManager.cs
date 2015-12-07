@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
 	// colors => 0 = blue, 1 = red, 2 = green, 3 = yellow
 	public int color1;
 	public int color2;
-
+	
 	public float area1;
 	public float area2;
 
@@ -63,16 +63,14 @@ public class GameManager : MonoBehaviour {
 
 		timerInSeconds = 0.0f;
 
-//		area1 = 0.0f;
-//		name1 = "bla";
-
 	}
 
 //	public static GameObject p1;
 
 	public void ResetLevel(){
 		timerInSeconds = 0.0f;
-		area1 = 0.12345f;
+		area1 = 0.0f;
+		area2 = 0.0f;
 
 		//setup material
 		Debug.Log ("Color1: " + color1);
@@ -118,6 +116,12 @@ public class GameManager : MonoBehaviour {
 		minutes = (int)(timerInSeconds / 60f);
 		secondsInMinute = (int)(timerInSeconds % 60f);
 
+		//for testing
+		area1 += 1.0f;
+		area2 += 2.0f;
+
+
+
 		//find player spheres
 		if (GameObject.FindGameObjectWithTag ("Player1") && GameObject.FindGameObjectWithTag ("Player2") && !set) {
 			SetMaterial1();
@@ -126,6 +130,16 @@ public class GameManager : MonoBehaviour {
 		}
 
 
+
+	}
+
+	public float normalizeArea(float a){
+		float aMin = 0.0f;
+		float aMax = 100 * 100;
+
+		float normalized = (a - aMin) / (aMax - aMin);
+
+		return normalized;
 
 	}
 

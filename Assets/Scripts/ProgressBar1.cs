@@ -2,9 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ProgressBar : MonoBehaviour {
-
-	public float progress = 0.3f;
+public class ProgressBar1 : MonoBehaviour {
+	
 
 	// Use this for initialization
 	void Start () {
@@ -15,8 +14,11 @@ public class ProgressBar : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+//		float area = 0.4f;
+		float area = GameManager.instance.area1;
+		float nArea = GameManager.instance.normalizeArea (area);
 		Image image = GetComponent<Image> ();
-		image.fillAmount = progress;
+		image.fillAmount = nArea;
 
 	}
 }
