@@ -69,7 +69,7 @@ public class TreeSet
 			array[i,1] = minAncestor.coordinates[1];
 			curr = curr.eraseNode(minAncestor);
 		}
-		//printArray (array);
+		printArray (array);
 		//print (this.findMinAncestor().coordinates[0] + " || " + this.findMinAncestor().coordinates[1]);
 		return array;
 	}
@@ -262,9 +262,9 @@ public class GameLogic : MonoBehaviour {
 					//print(res.print (""));
 					//print(res.toArray()[0,0] + " : " + res.toArray()[0,1] + " || " + res.toArray()[res.length() - 1,0] + " : " + res.toArray()[res.length() - 1,1]);
 					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
-					res.toArray();
-					res.toOrderedArray();
-					setCoordinates(res.toOrderedArray(), 3);
+					//res.toArray();
+					//res.toOrderedArray();
+					setCoordinatesOptimized(res.toOrderedArray(), 3);
 					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
@@ -346,6 +346,41 @@ public class GameLogic : MonoBehaviour {
 			}
 		}
 
+	}
+
+	void setCoordinatesOptimized(int[,] border, int mark){
+		print("i: "+ (border [border.GetLength(0)-1, 0]+50));
+		for (int i = border [0, 0]+50; i <= border [border.GetLength(0)-1, 0]+50; i++) {
+			bool flag = false;
+			for (int j = 0; j < fieldSize; j++) {
+				for (int k = 0; k < border.GetLength(0); k++) {
+					if (border [k, 0]+50 == i && border [k, 1]+50 == j) {
+						print ((border [k, 0]+50) + " : " + (border [k, 1]+50));
+						int borderPoints = 0;
+						int prev = border [k, 1]+50;
+						for (int m = k+1; m < border.GetLength(0); m++) {
+							if (border [m, 0]+50 == i && prev != border [m, 1]+50-1) {
+								borderPoints++;
+							}
+							prev=border [m, 1]+50;
+						}
+						if (borderPoints % 2 == 0) {
+							coordinates [i, j] = mark;
+							flag = false;
+							//							print ("HERE");
+						} else {
+							coordinates [i, j] = mark;
+							flag = true;
+							//							print ("NOOO");
+						}
+					}
+				}
+				if (flag) {
+					coordinates [i, j] = mark;
+				}
+			}
+		}
+		
 	}
 
 	int [] getPosition (GameObject player)
