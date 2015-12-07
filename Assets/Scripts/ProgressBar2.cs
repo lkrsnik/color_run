@@ -17,6 +17,8 @@ public class ProgressBar2 : MonoBehaviour {
 		float area = GameManager.instance.area2;
 		float nArea = GameManager.instance.normalizeArea (area);
 		Image image = GetComponent<Image> ();
+
+		image.color = GameManager.instance.cColor2;
 		image.fillAmount = nArea;
 		
 	}

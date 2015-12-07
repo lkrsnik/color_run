@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour {
 
 	// colors => 0 = blue, 1 = red, 2 = green, 3 = yellow
 	public int color1;
+	public Color cColor1;
 	public int color2;
+	public Color cColor2;
 	
 	public float area1;
 	public float area2;

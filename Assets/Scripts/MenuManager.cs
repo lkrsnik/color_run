@@ -53,35 +53,43 @@ public class MenuManager : MonoBehaviour
 
 	public void ColorSelected1Blue(){
 		GameManager.instance.color1 = 0;
+		GameManager.instance.cColor1 = Color.blue;
 		Debug.Log ("Blue Selected");
 	}
 	public void ColorSelected1Red(){
 		GameManager.instance.color1 = 1;
+		GameManager.instance.cColor1 = Color.red;
 		Debug.Log ("Red Selected");
 	}
 	public void ColorSelected1Green(){
 		GameManager.instance.color1 = 2;
+		GameManager.instance.cColor1 = Color.green;
 		Debug.Log ("Green Selected");
 	}
 	public void ColorSelected1Yellow(){
 		GameManager.instance.color1 = 3;
+		GameManager.instance.cColor1 = Color.yellow;
 		Debug.Log ("Yellow Selected");
 	}
 
 	public void ColorSelected2Blue(){
 		GameManager.instance.color2 = 0;
+		GameManager.instance.cColor2 = Color.blue;
 		Debug.Log ("Blue Selected");
 	}
 	public void ColorSelected2Red(){
 		GameManager.instance.color2 = 1;
+		GameManager.instance.cColor2 = Color.red;
 		Debug.Log ("Red Selected");
 	}
 	public void ColorSelected2Green(){
 		GameManager.instance.color2 = 2;
+		GameManager.instance.cColor2 = Color.green;
 		Debug.Log ("Green Selected");
 	}
 	public void ColorSelected2Yellow(){
 		GameManager.instance.color2 = 3;
+		GameManager.instance.cColor2 = Color.yellow;
 		Debug.Log ("Yellow Selected");
 	}
 

@@ -11,6 +11,7 @@ public class PlayerName2 : MonoBehaviour {
 	void Start () {
 		playerText = GetComponent<Text> () as Text;
 		playerText.text = GameManager.instance.name2;
+		playerText.color = GameManager.instance.cColor2;
 	}
 	
 }
