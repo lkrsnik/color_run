@@ -144,7 +144,7 @@ public class GameLogic : MonoBehaviour {
 	public GameObject fieldStart ;
 	public GameObject fieldEnd ;
 	public GameObject [] players ;
-	public float tailTime;
+	float tailTime;
 
 	int[,] coordinates;
 	TreeSet[] activePath;
@@ -167,6 +167,7 @@ public class GameLogic : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		tailTime = players[0].GetComponent<TrailRenderer>().time;
 //		fieldStartPosX = (int) fieldStart.transform.position.x;
 //		fieldStartPosZ = (int) fieldStart.transform.position.z;
 //

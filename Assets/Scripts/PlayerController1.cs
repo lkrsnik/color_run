@@ -5,6 +5,7 @@ public class PlayerController1 : MonoBehaviour {
 
 	public float speed;
 	private Rigidbody rb;
+	public float angle;
 
 	void Awake() {
 		DontDestroyOnLoad(transform.gameObject);
@@ -13,15 +14,20 @@ public class PlayerController1 : MonoBehaviour {
 	void Start()
 	{
 		rb = GetComponent<Rigidbody> ();
+		//rb.velocity=new Vector3 (-1.0f, 0.0f, 0.0f) * speed;
 	}
 
 	void FixedUpdate()
 	{
 		float moveH = Input.GetAxis ("Horizontal_AD");
-		float moveV = Input.GetAxis ("Vertical_WS");
+		//float moveV = Input.GetAxis ("Vertical_WS");
 
-		Vector3 movement = new Vector3 (moveH, 0.0f, moveV);
+		//Vector3 movement = Quaternion.AngleAxis(moveH*30, Vector3.up) * new Vector3 (-1.0f, 0.0f, 0.0f);
+		angle += moveH * 0.05f;
 
-		rb.AddForce (movement * speed);
+		rb.velocity=new Vector3 (Mathf.Sin(angle), rb.velocity.y/speed, Mathf.Cos(angle)) * speed;
+
+		//rb.AddForce (Quaternion.AngleAxis (moveH*100, Vector3.up)* rb.velocity);
+		//rb.AddForce (movement * speed);
 	}
 }
