@@ -1,88 +1,279 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//USED DATASTRUCTURES
+//TREE SET
+public class TreeSet
+{
+	public int[] coordinates;
+	public TreeSet son;
+	public float time;
+	public TreeSet(int[] coor, TreeSet s, float t){
+		coordinates = coor;
+		son = s;
+		time = t;
+	}
+	public bool contains(int[] coor){
+		if (coor [0] == coordinates [0] && coor [1] == coordinates [1])
+			return true;
+		if (son == null)
+			return false;
+		return son.contains (coor);
+	}
+	public string print(string text){
+		text += coordinates [0] + " : " + coordinates [1] + " - " + time + " || ";
+		if (son == null)
+			return text;
+		else
+			return son.print (text);
+		
+	}
+	public TreeSet getBorder(TreeSet ancestor = null, TreeSet finnish = null){
+		TreeSet border = new TreeSet (coordinates, ancestor, 0);
+		if (finnish != null && coordinates [0] == finnish.coordinates [0] && coordinates [1] == finnish.coordinates [1])
+			return border.son;
+		else
+			if (finnish == null)
+				return son.getBorder (border, border);
+			else
+				return son.getBorder (border, finnish);
+
+	}
+	public int length(){
+		if (son == null)
+			return 1;
+		return son.length() + 1;
+	}
+	public int[,] toArray(){
+		int length = this.length ();
+		int [,] array = new int [length, 2];
+		TreeSet curr = this;
+		for (int i = 0; i < length; i++) {
+			array[i,0] = curr.coordinates[0];
+			array[i,1] = curr.coordinates[1];
+			curr = curr.next();
+		}
+		return array;
+	}
+	private TreeSet next(){
+		return this.son;
+	}
+	//public TreeSet get(){
+	public void deleteOld(float tailTime){
+		if (this.son == null || Time.time - this.son.time > tailTime)
+			this.son = null;
+		else
+			this.son.deleteOld (tailTime);
+	}
+
+}
+
 public class GameLogic : MonoBehaviour {
 
 
 	public GameObject fieldStart ;
 	public GameObject fieldEnd ;
 	public GameObject [] players ;
+	public float tailTime;
 
-	bool[,] coordinates;
-	bool[,] activePath;
+	int[,] coordinates;
+	TreeSet[] activePath;
 	
 	static int fieldSize = 100;
-	int fieldStartPosX;
-	int fieldStartPosZ;
+	static int fieldStartPosX = 205;
+	static int fieldStartPosZ = 205;
 	//float fieldStartPosX = fieldStart.transform.position.x;
 	//float fieldStartPosZ = fieldStart.transform.position.z;
 	//26.1;
-	int fieldEndPosX;// = 48.71;
-	int fieldEndPosZ;// = 123.19;
+	static int fieldEndPosX = 305;// = 48.71;
+	static int fieldEndPosZ = 305;// = 123.19;
 
-	float unitSizeX;
-	float unitSizeZ;
-
+	int[,] pos;
 
 	private float[,,] alphaData;
 	private TerrainData tData;
-	private float percentage;
+	//private float percentage;
 
 
 	// Use this for initialization
 	void Start () {
-		fieldStartPosX = (int) fieldStart.transform.position.x;
-		fieldStartPosZ = (int) fieldStart.transform.position.z;
+//		fieldStartPosX = (int) fieldStart.transform.position.x;
+//		fieldStartPosZ = (int) fieldStart.transform.position.z;
+//
+//		fieldEndPosX = (int) fieldEnd.transform.position.x;
+//		fieldEndPosZ = (int) fieldEnd.transform.position.z;
 
-		fieldEndPosX = (int) fieldEnd.transform.position.x;
-		fieldEndPosZ = (int) fieldEnd.transform.position.z;
+		// INITIALIZE COORDINATES
+		coordinates = new int[fieldSize, fieldSize];
 
-		//unitSizeX = (fieldEnd.transform.position.x - fieldStartPosX) / fieldSize;
-		//unitSizeZ = (fieldEnd.transform.position.z - fieldStartPosZ) / fieldSize;
-		//print (unitSizeX + " || " + unitSizeZ);
+		// INITIALIZE TERRAIN
+		initializeTerrainTexture ();
+
+		// SET PREVIOUS POSITION
+		int k = 0;
+
+		activePath = new TreeSet[players.GetLength(0)];
+		pos = new int[players.GetLength (0), 2];
+		foreach (GameObject player in players){
+			pos[k,0] = getPosition(player)[0];
+			pos[k,1] = getPosition(player)[1];
+//			print (pos[k,0]);
+//			print (pos[k,1]);
+			int[] posCoor = {pos[k,0], pos[k,0]};
+			activePath[k] = new TreeSet(posCoor, null, Time.time);
+			k++;
+		}
 
 
+
+		// PRINT POSITIONS
+//		foreach (GameObject player in players){
+//			print (getPosition(player)[0] + " || " + getPosition(player)[1]);
+//		}
+	}
+
+	void initializeTerrainTexture (){
 		tData = Terrain.activeTerrain.terrainData;
 		
-		alphaData = tData.GetAlphamaps(0, 0, tData.alphamapWidth, tData.alphamapHeight);
+		alphaData = tData.GetAlphamaps (0, 0, tData.alphamapWidth, tData.alphamapHeight);
 
-		//for (int i = fieldStartPosX; i < alphaData.GetLength(0)-fieldEndPosX; i++)
-		//	for (int j = fieldStartPosZ; j < alphaData.GetLength(1)-fieldEndPosZ; j++) 
-		for (int i = 205; i < 305; i++)
-			for (int j = 205; j < 305; j++) 
+		for (int i = fieldStartPosX; i < fieldEndPosX; i++)
+			for (int j = fieldStartPosZ; j < fieldEndPosZ; j++) {
+			
+			
+				alphaData [i, j, 0] = 0;
+				alphaData [i, j, 1] = 1;
+				alphaData [i, j, 2] = 0;
+				alphaData [i, j, 3] = 0;
+				alphaData [i, j, 4] = 0;
+				alphaData [i, j, 5] = 0;
+				
+			}	
+		
+		tData.SetAlphamaps (0, 0, alphaData);
+		
+//		print (tData.alphamapHeight);
+//		print (tData.alphamapWidth);
+
+
+	}
+
+//	public void SetPercentage(double perc){
+//		percentage = (float) perc /100f;
+//		
+//		for(int y=0; y<tData.alphamapHeight; y++){
+//			for(int x = 0; x < tData.alphamapWidth; x++){
+//				alphaData[x, y, 0] = 1 - percentage;
+//				alphaData[x, y, 2] = percentage;
+//			}
+//		}
+//		
+//		tData.SetAlphamaps(0, 0, alphaData);
+//	}
+	// Update is called once per frame
+	void Update () {
+//		foreach (GameObject player in players){
+//			print (getPosition(player)[0] + " || " + getPosition(player)[1]);
+//		}
+
+		// SET POSITION
+		int k = 0;
+		foreach (GameObject player in players){
+			int[] nPos = getPosition(player);
+//			print (pos[k,0] + "==" + nPos[0]);
+//			print (pos[k,1] + "==" + nPos[1]);
+			if(pos[k,0] != nPos[0] || pos[k,1] != nPos[1]){
+				activePath[k].deleteOld(tailTime);
+				int[] posCoor = {pos[k,0], pos[k,1]};
+				bool contains = activePath[k].contains(posCoor);
+				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
+				if (contains){
+					TreeSet res = activePath[k].getBorder();
+					print(res.print (""));
+					print(res.toArray()[0,0] + " : " + res.toArray()[0,1] + " || " + res.toArray()[res.length() - 1,0] + " : " + res.toArray()[res.length() - 1,1]);
+					setCoordinates(res.toArray(), 3);
+				}
+				pos[k,0] = nPos[0];
+				pos[k,1] = nPos[1];
+				//print (activePath[k].print(""));
+			}
+				
+			k++;
+		}
+		applyCoordinates ();
+
+	}
+
+	void applyCoordinates ()
+	{
+		for (int i = 0; i < coordinates.GetLength(0); i++)
+			for (int j = 0; j < coordinates.GetLength(1); j++) 
 		{
-			
-			
-			alphaData[i,j,0] = 0;
-			alphaData[i,j,1] = 1;
-			alphaData[i,j,2] = 0;
+			if ( coordinates[i,j] != 0)
+			{			
+				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,1] = 0;
+				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
+			}
 			
 		}	
 		
-		tData.SetAlphamaps(0, 0, alphaData);
-
-		print (tData.alphamapHeight);
-		print (tData.alphamapWidth);
-		//SetPercentage(0);
-
-		//print (fieldStartPosX + " || " + fieldStart.transform.position.z);
-		//print (fieldEnd.transform.position.x + " || " + fieldEnd.transform.position.z);
+		tData.SetAlphamaps (0, 0, alphaData);
 	}
 
-	public void SetPercentage(double perc){
-		percentage = (float) perc /100f;
-		
-		for(int y=0; y<tData.alphamapHeight; y++){
-			for(int x = 0; x < tData.alphamapWidth; x++){
-				alphaData[x, y, 0] = 1 - percentage;
-				alphaData[x, y, 2] = percentage;
+	void setCoordinates(int[,] border, int mark){
+		// THIS IS UGLY!!!
+		for (int i = 0; i < fieldSize; i++) {
+			bool flag = false;
+			for (int j = 0; j < fieldSize; j++) {
+				for (int k = 0; k < border.GetLength(0); k++) {
+					//print ("HERE!!!");
+					if (border [k, 0]+50 == i && border [k, 1]+50 == j) {
+						int borderPoints = 0;
+						int prev = j;
+						for (int l = j+1; l < fieldSize; l++) {
+							for (int m = k+1; m < border.GetLength(0); m++) {
+								if (border [m, 0]+50 == i && border [m, 1]+50 == l && prev != l-1) {
+									borderPoints++;
+									prev=l;
+								}
+							}
+						}
+						if (borderPoints % 2 == 0) {
+							coordinates [i, j] = mark;
+							flag = false;
+							print ("HERE");
+						} else {
+							coordinates [i, j] = mark;
+							flag = true;
+							print ("NOOO");
+						}
+					}
+				}
+				if (flag) {
+					coordinates [i, j] = mark;
+				}
 			}
 		}
-		
-		tData.SetAlphamaps(0, 0, alphaData);
+
 	}
-	// Update is called once per frame
-	void Update () {
+
+	int [] getPosition (GameObject player)
+	{
+		Transform playerTransform = player.transform;
+		// get player position
+		Vector3 position = playerTransform.position;
+		
+		float [] pos = new float[2];
+		pos [0] = position.z / tData.size.x * tData.alphamapWidth;
+		pos [1] = position.x / tData.size.z * tData.alphamapHeight;
+		
+		int [] pos1 = new int[2];
+		
+		pos1 [0] = (int) Mathf.Round (pos [0]);
+		pos1 [1] = (int) Mathf.Round (pos [1]);
+
+
+		return pos1;
 		
 	}
 }
