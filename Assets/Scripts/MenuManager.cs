@@ -6,13 +6,31 @@ public class MenuManager : MonoBehaviour
 	// Currently open menu. Set the initial reference in the Inspector 
 	public Menu currentMenu;
 
+	public Menu mainMenu;
+
 	void Start ()
 	{
 		// For showing the main menu
 		ShowMenu (currentMenu);  
 		//setting up GameManager
 		DontDestroyOnLoad(GameManager.Instance);
+		DontDestroyOnLoad (mainMenu);
 	}
+
+	void OnLevelWasLoaded(int level) {
+		if (level == 0)
+			print("Loaded Level " + level);
+		//not working yet (menu not showing up...)
+			Debug.Log (mainMenu);
+		    currentMenu = mainMenu;
+			Start ();
+//			currentMenu = mainMenu;
+//			currentMenu.IsOpen = true; 
+//			ShowMenu (mainMenu);
+		
+	}
+
+
 	// Activate the given menu and deactivate the current 
 	// Invokable by the Inspector
 	public void ShowMenu (Menu menu)
