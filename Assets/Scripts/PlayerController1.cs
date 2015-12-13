@@ -6,6 +6,7 @@ public class PlayerController1 : MonoBehaviour {
 	public float speed;
 	private Rigidbody rb;
 	public float angle;
+	public int player;
 
 	void Awake() {
 		DontDestroyOnLoad(transform.gameObject);
@@ -19,7 +20,18 @@ public class PlayerController1 : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-		float moveH = Input.GetAxis ("Horizontal_AD");
+		float moveH;
+		switch (player) {
+			case 1:
+				moveH = Input.GetAxis ("Horizontal_AD");
+				break;
+			case 2:
+				moveH = Input.GetAxis ("Horizontal_LR");
+				break;
+			default:
+				moveH = 0f;
+			break;
+		}
 		//float moveV = Input.GetAxis ("Vertical_WS");
 
 		//Vector3 movement = Quaternion.AngleAxis(moveH*30, Vector3.up) * new Vector3 (-1.0f, 0.0f, 0.0f);

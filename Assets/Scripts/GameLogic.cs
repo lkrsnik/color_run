@@ -149,14 +149,14 @@ public class GameLogic : MonoBehaviour {
 	int[,] coordinates;
 	TreeSet[] activePath;
 	
-	static int fieldSize = 100;
-	static int fieldStartPosX = 205;
-	static int fieldStartPosZ = 205;
+	static int fieldSize = 60;
+	static int fieldStartPosX = 225;
+	static int fieldStartPosZ = 225;
 	//float fieldStartPosX = fieldStart.transform.position.x;
 	//float fieldStartPosZ = fieldStart.transform.position.z;
 	//26.1;
-	static int fieldEndPosX = 305;// = 48.71;
-	static int fieldEndPosZ = 305;// = 123.19;
+	static int fieldEndPosX = 285;// = 48.71;
+	static int fieldEndPosZ = 285;// = 123.19;
 
 	int[,] pos;
 
@@ -265,7 +265,13 @@ public class GameLogic : MonoBehaviour {
 					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
 					//res.toArray();
 					//res.toOrderedArray();
-					setCoordinatesOptimized(res.toOrderedArray(), 3);
+					if (GameManager.instance != null) {
+						if (player.name == "Player1")
+							setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
+						else if (player.name == "Player2")
+							setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
+					} else
+						setCoordinatesOptimized (res.toOrderedArray (), 3);
 					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
@@ -295,10 +301,17 @@ public class GameLogic : MonoBehaviour {
 			{			
 				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,1] = 0;
 				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
-				if (coordinates[i,j] == 2)
-					area1++;
-				else if (coordinates[i,j] == 3)
-					area2++;
+				if (GameManager.instance != null) {
+					if (coordinates [i, j] == GameManager.instance.color1)
+						area1++;
+					else if (coordinates [i, j] == GameManager.instance.color2)
+						area2++;
+				} else {
+					if (coordinates [i, j] == 2)
+						area1++;
+					else if (coordinates [i, j] == 3)
+						area2++;
+				}
 			}
 			
 		}	
@@ -319,12 +332,12 @@ public class GameLogic : MonoBehaviour {
 			for (int j = 0; j < fieldSize; j++) {
 				for (int k = 0; k < border.GetLength(0); k++) {
 					//print ("HERE!!!");
-					if (border [k, 0]+50 == i && border [k, 1]+50 == j) {
+					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
 						int borderPoints = 0;
 						int prev = j;
 						for (int l = j+1; l < fieldSize; l++) {
 							for (int m = k+1; m < border.GetLength(0); m++) {
-								if (border [m, 0]+50 == i && border [m, 1]+50 == l && prev != l-1) {
+								if (border [m, 0]+(fieldSize/2) == i && border [m, 1]+(fieldSize/2) == l && prev != l-1) {
 									borderPoints++;
 									prev=l;
 								}
@@ -346,24 +359,23 @@ public class GameLogic : MonoBehaviour {
 				}
 			}
 		}
-
 	}
 
 	void setCoordinatesOptimized(int[,] border, int mark){
-		print("i: "+ (border [border.GetLength(0)-1, 0]+50));
-		for (int i = border [0, 0]+50; i <= border [border.GetLength(0)-1, 0]+50; i++) {
+		print("i: "+ (border [border.GetLength(0)-1, 0]+(fieldSize/2)));
+		for (int i = border [0, 0]+(fieldSize/2); i <= border [border.GetLength(0)-1, 0]+(fieldSize/2); i++) {
 			bool flag = false;
 			for (int j = 0; j < fieldSize; j++) {
 				for (int k = 0; k < border.GetLength(0); k++) {
-					if (border [k, 0]+50 == i && border [k, 1]+50 == j) {
-						print ((border [k, 0]+50) + " : " + (border [k, 1]+50));
+					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
+						print ((border [k, 0]+(fieldSize/2)) + " : " + (border [k, 1]+(fieldSize/2)));
 						int borderPoints = 0;
-						int prev = border [k, 1]+50;
+						int prev = border [k, 1]+(fieldSize/2);
 						for (int m = k+1; m < border.GetLength(0); m++) {
-							if (border [m, 0]+50 == i && prev != border [m, 1]+50-1) {
+							if (border [m, 0]+(fieldSize/2) == i && prev != border [m, 1]+(fieldSize/2)-1) {
 								borderPoints++;
 							}
-							prev=border [m, 1]+50;
+							prev=border [m, 1]+(fieldSize/2);
 						}
 						if (borderPoints % 2 == 0) {
 							coordinates [i, j] = mark;

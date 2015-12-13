@@ -70,12 +70,12 @@ public class MenuManager : MonoBehaviour
 	}
 
 	public void ColorSelected1Blue(){
-		GameManager.instance.color1 = 0;
+		GameManager.instance.color1 = 3;
 		GameManager.instance.cColor1 = Color.blue;
 		Debug.Log ("Blue Selected");
 	}
 	public void ColorSelected1Red(){
-		GameManager.instance.color1 = 1;
+		GameManager.instance.color1 = 5;
 		GameManager.instance.cColor1 = Color.red;
 		Debug.Log ("Red Selected");
 	}
@@ -85,18 +85,18 @@ public class MenuManager : MonoBehaviour
 		Debug.Log ("Green Selected");
 	}
 	public void ColorSelected1Yellow(){
-		GameManager.instance.color1 = 3;
+		GameManager.instance.color1 = 4;
 		GameManager.instance.cColor1 = Color.yellow;
 		Debug.Log ("Yellow Selected");
 	}
 
 	public void ColorSelected2Blue(){
-		GameManager.instance.color2 = 0;
+		GameManager.instance.color2 = 3;
 		GameManager.instance.cColor2 = Color.blue;
 		Debug.Log ("Blue Selected");
 	}
 	public void ColorSelected2Red(){
-		GameManager.instance.color2 = 1;
+		GameManager.instance.color2 = 5;
 		GameManager.instance.cColor2 = Color.red;
 		Debug.Log ("Red Selected");
 	}
@@ -106,7 +106,7 @@ public class MenuManager : MonoBehaviour
 		Debug.Log ("Green Selected");
 	}
 	public void ColorSelected2Yellow(){
-		GameManager.instance.color2 = 3;
+		GameManager.instance.color2 = 4;
 		GameManager.instance.cColor2 = Color.yellow;
 		Debug.Log ("Yellow Selected");
 	}

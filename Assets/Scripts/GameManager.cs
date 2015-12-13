@@ -154,11 +154,11 @@ public class GameManager : MonoBehaviour {
 		TrailRenderer trenderer = p1.GetComponent<TrailRenderer> ();
 
 		switch (color1) {
-		case 0:
+		case 3:
 			renderer.material = blueMat;
 			trenderer.material = blueTrailMat;
 			break;
-		case 1:
+		case 5:
 			renderer.material = redMat;
 			trenderer.material = redTrailMat;
 			break;
@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour {
 			renderer.material = greenMat;
 			trenderer.material = greenTrailMat;
 			break;
-		case 3:
+		case 4:
 			renderer.material = yellowMat;
 			trenderer.material = yellowTrailMat;
 			break;
@@ -185,11 +185,11 @@ public class GameManager : MonoBehaviour {
 		TrailRenderer trenderer = p2.GetComponent<TrailRenderer> ();
 		
 		switch (color2) {
-		case 0:
+		case 3:
 			renderer.material = blueMat;
 			trenderer.material = blueTrailMat;
 			break;
-		case 1:
+		case 5:
 			renderer.material = redMat;
 			trenderer.material = redTrailMat;
 			break;
@@ -197,7 +197,7 @@ public class GameManager : MonoBehaviour {
 			renderer.material = greenMat;
 			trenderer.material = greenTrailMat;
 			break;
-		case 3:
+		case 4:
 			renderer.material = yellowMat;
 			trenderer.material = yellowTrailMat;
 			break;
