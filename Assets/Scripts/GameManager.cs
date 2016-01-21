@@ -10,6 +10,18 @@ public class GameManager : MonoBehaviour {
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
+	Material blueMat;
+	Material redMat;
+	Material greenMat;
+	Material yellowMat;
+
+	Material blueTrailMat;
+	Material redTrailMat;
+	Material greenTrailMat;
+	Material yellowTrailMat;
+
+	public PlayerData[] players = new PlayerData[4];
+
 	public Vector3 initialPos1;
 	public Vector3 initialPos2;
 
@@ -19,7 +31,7 @@ public class GameManager : MonoBehaviour {
 	public string name1;
 	public string name2;
 
-	// colors => 0 = blue, 1 = red, 2 = green, 3 = yellow
+	// colors => 2 = green, 3 = blue, 4 = yellow, 5 = red
 	public int color1;
 	public Color cColor1;
 	public int color2;
@@ -28,16 +40,16 @@ public class GameManager : MonoBehaviour {
 	public float area1;
 	public float area2;
 
-	// Assigns a material named "Assets/Resources/blueSmiley" to the object.
-	Material blueMat = Resources.Load("blueSmiley", typeof(Material)) as Material;
-	Material redMat = Resources.Load("redSmiley", typeof(Material)) as Material;
-	Material greenMat = Resources.Load("greenSmiley", typeof(Material)) as Material;
-	Material yellowMat = Resources.Load("yellowSmiley", typeof(Material)) as Material;
-
-	Material blueTrailMat = Resources.Load("blueTrail", typeof(Material)) as Material;
-	Material redTrailMat = Resources.Load("redTrail", typeof(Material)) as Material;
-	Material greenTrailMat = Resources.Load("greenTrail", typeof(Material)) as Material;
-	Material yellowTrailMat = Resources.Load("yellowTrail", typeof(Material)) as Material;
+//	// Assigns a material named "Assets/Resources/blueSmiley" to the object.
+//	Material blueMat = Resources.Load("blueSmiley", typeof(Material)) as Material;
+//	Material redMat = Resources.Load("redSmiley", typeof(Material)) as Material;
+//	Material greenMat = Resources.Load("greenSmiley", typeof(Material)) as Material;
+//	Material yellowMat = Resources.Load("yellowSmiley", typeof(Material)) as Material;
+//
+//	Material blueTrailMat = Resources.Load("blueTrail", typeof(Material)) as Material;
+//	Material redTrailMat = Resources.Load("redTrail", typeof(Material)) as Material;
+//	Material greenTrailMat = Resources.Load("greenTrail", typeof(Material)) as Material;
+//	Material yellowTrailMat = Resources.Load("yellowTrail", typeof(Material)) as Material;
 
 
 //	public PlayerData[] playerDatas = new PlayerData[4];
@@ -92,6 +104,14 @@ public class GameManager : MonoBehaviour {
 		GameObject p2 = GameObject.FindGameObjectWithTag ("Player" + 2);
 		p2.transform.position = initialPos2;
 
+		//set material and color
+
+		SetMaterial (1, GameManager.instance.color1);
+		SetMaterial (2, GameManager.instance.color2);
+
+
+		//set name
+
 		//get sphere objects
 		//Debug.Log (GameObject.FindGameObjectWithTag ("Player1"));
 //		Debug.Log (GameObject.Find("Player1"));
@@ -119,7 +139,16 @@ public class GameManager : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
+		// Assigns a material named "Assets/Resources/blueSmiley" to the object.
+		blueMat = Resources.Load("blueSmiley", typeof(Material)) as Material;
+		redMat = Resources.Load("redSmiley", typeof(Material)) as Material;
+		greenMat = Resources.Load("greenSmiley", typeof(Material)) as Material;
+		yellowMat = Resources.Load("yellowSmiley", typeof(Material)) as Material;
 
+		blueTrailMat = Resources.Load("blueTrail", typeof(Material)) as Material;
+		redTrailMat = Resources.Load("redTrail", typeof(Material)) as Material;
+		greenTrailMat = Resources.Load("greenTrail", typeof(Material)) as Material;
+		yellowTrailMat = Resources.Load("yellowTrail", typeof(Material)) as Material;
 
 	}
 
@@ -139,8 +168,7 @@ public class GameManager : MonoBehaviour {
 
 		//find player spheres
 		if (GameObject.FindGameObjectWithTag ("Player1") && GameObject.FindGameObjectWithTag ("Player2") && !set) {
-			SetMaterial1();
-			SetMaterial2();
+	
 			initialPos1 = GetPosition (1);
 			initialPos2 = GetPosition (2);
 			set = true;
@@ -163,6 +191,37 @@ public class GameManager : MonoBehaviour {
 		float normalized = (a - aMin) / (aMax - aMin);
 
 		return normalized;
+
+	}
+
+	public void SetMaterial(int playerID, int color){
+		Debug.Log ("setting material for player" + playerID + "to: " + color);
+
+		GameObject p = GameObject.FindGameObjectWithTag ("Player" + playerID);
+		Renderer renderer = p.GetComponent<Renderer> ();
+		TrailRenderer trenderer = p.GetComponent<TrailRenderer> ();
+
+		switch (color) {
+		case 2:
+			renderer.material = greenMat;
+			trenderer.material = greenTrailMat;
+			break;
+		case 3:
+			renderer.material = blueMat;
+			trenderer.material = blueTrailMat;
+			break;
+		case 4:
+			renderer.material = yellowMat;
+			trenderer.material = yellowTrailMat;
+			break;
+		case 5:
+			renderer.material = redMat;
+			trenderer.material = redTrailMat;
+			break;
+		default:
+			Debug.Log ("wrong material!");
+			break;
+		}
 
 	}
 
