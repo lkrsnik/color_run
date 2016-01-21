@@ -13,6 +13,8 @@ public class TreeSet
 		son = s;
 		time = t;
 	}
+
+	// checks if tail intersects
 	public bool contains(int[] coor){
 		if (coor [0] == coordinates [0] && coor [1] == coordinates [1])
 			return true;
@@ -30,9 +32,9 @@ public class TreeSet
 	}
 	public TreeSet getBorder(TreeSet ancestor = null, TreeSet finnish = null){
 		TreeSet border = new TreeSet (coordinates, ancestor, 0);
-		if (finnish != null && coordinates [0] == finnish.coordinates [0] && coordinates [1] == finnish.coordinates [1])
+		if (finnish != null && coordinates [0] == finnish.coordinates [0] && coordinates [1] == finnish.coordinates [1]) {
 			return border.son;
-		else
+		}else
 			if (finnish == null)
 				return son.getBorder (border, border);
 			else
@@ -69,7 +71,7 @@ public class TreeSet
 			array[i,1] = minAncestor.coordinates[1];
 			curr = curr.eraseNode(minAncestor);
 		}
-		printArray (array);
+		//printArray (array);
 		//print (this.findMinAncestor().coordinates[0] + " || " + this.findMinAncestor().coordinates[1]);
 		return array;
 	}
@@ -128,7 +130,8 @@ public class TreeSet
 	private TreeSet next(){
 		return this.son;
 	}
-	//public TreeSet get(){
+
+	// DELETES TOO OLD NODES
 	public void deleteOld(float tailTime){
 		if (this.son == null || Time.time - this.son.time > tailTime)
 			this.son = null;
@@ -144,16 +147,20 @@ public class GameLogic : MonoBehaviour {
 	public GameObject fieldStart ;
 	public GameObject fieldEnd ;
 	public GameObject [] players ;
+	public bool eatArea = true;
 	float tailTime;
+
+	static int maxPlayers = 4;
 
 	int[,] coordinates;
 	TreeSet[] activePath;
-	
+
+	// IF IT IS 60 --> 60*60
 	static int fieldSize = 60;
+	// ABSOLUTE FIELD START POSITION
 	static int fieldStartPosX = 225;
 	static int fieldStartPosZ = 225;
-	//float fieldStartPosX = fieldStart.transform.position.x;
-	//float fieldStartPosZ = fieldStart.transform.position.z;
+
 	//26.1;
 	static int fieldEndPosX = 285;// = 48.71;
 	static int fieldEndPosZ = 285;// = 123.19;
@@ -167,12 +174,8 @@ public class GameLogic : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// TIME IN WHICH TAIL VANISHES
 		tailTime = players[0].GetComponent<TrailRenderer>().time;
-//		fieldStartPosX = (int) fieldStart.transform.position.x;
-//		fieldStartPosZ = (int) fieldStart.transform.position.z;
-//
-//		fieldEndPosX = (int) fieldEnd.transform.position.x;
-//		fieldEndPosZ = (int) fieldEnd.transform.position.z;
 
 		// INITIALIZE COORDINATES
 		coordinates = new int[fieldSize, fieldSize];
@@ -183,14 +186,15 @@ public class GameLogic : MonoBehaviour {
 		// SET PREVIOUS POSITION
 		int k = 0;
 
+		// CREATES A DATA STRUCTURE WITH THE TAIL
 		activePath = new TreeSet[players.GetLength(0)];
 		pos = new int[players.GetLength (0), 2];
 		foreach (GameObject player in players){
 			pos[k,0] = getPosition(player)[0];
 			pos[k,1] = getPosition(player)[1];
-//			print (pos[k,0]);
-//			print (pos[k,1]);
-			int[] posCoor = {pos[k,0], pos[k,0]};
+
+			// INITIAL POSITION MUST BE DIFFERENT FROM REAL, SO THAT WE DONT GET INITIAL POS COLORED
+			int[] posCoor = {0, 0};
 			activePath[k] = new TreeSet(posCoor, null, Time.time);
 			k++;
 		}
@@ -203,6 +207,7 @@ public class GameLogic : MonoBehaviour {
 //		}
 	}
 
+	// SELECTS A FIELD TEXTURE DESERT AND APPLIES IT TO WASTELAND
 	void initializeTerrainTexture (){
 		tData = Terrain.activeTerrain.terrainData;
 		
@@ -243,23 +248,30 @@ public class GameLogic : MonoBehaviour {
 //	}
 	// Update is called once per frame
 	void Update () {
-//		foreach (GameObject player in players){
-//			print (getPosition(player)[0] + " || " + getPosition(player)[1]);
-//		}
 
 		// SET POSITION
 		int k = 0;
 		foreach (GameObject player in players){
+			// NEW POSITION
 			int[] nPos = getPosition(player);
 //			print (pos[k,0] + "==" + nPos[0]);
 //			print (pos[k,1] + "==" + nPos[1]);
 			if(pos[k,0] != nPos[0] || pos[k,1] != nPos[1]){
+				// deletes too old nodes
 				activePath[k].deleteOld(tailTime);
 				int[] posCoor = {pos[k,0], pos[k,1]};
+				// checks if tail intersects
 				bool contains = activePath[k].contains(posCoor);
+				// adds the latest element to our path
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
 					TreeSet res = activePath[k].getBorder();
+
+					//int[] posCoor = {0, 0};
+					// erases tail
+					activePath[k] = new TreeSet(posCoor, null, Time.time);
+					player.GetComponent<TrailRenderer> ().Clear ();
+					//rend.Clear;
 					//print(res.print (""));
 					//print(res.toArray()[0,0] + " : " + res.toArray()[0,1] + " || " + res.toArray()[res.length() - 1,0] + " : " + res.toArray()[res.length() - 1,1]);
 					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
@@ -267,11 +279,23 @@ public class GameLogic : MonoBehaviour {
 					//res.toOrderedArray();
 					if (GameManager.instance != null) {
 						if (player.name == "Player1")
-							setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
+							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
+							//getMark(res.toOrderedArray (), GameManager.instance.color1)
+							if (eatArea)
+								setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.color1);
+							else
+								setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.color1));
 						else if (player.name == "Player2")
-							setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
+							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
+							if (eatArea)
+								setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.color2);
+							else
+								setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.color2));
 					} else
-						setCoordinatesOptimized (res.toOrderedArray (), 3);
+						if (eatArea)
+							setCoordinatesOptimized2 (res.toOrderedArray (), 3);
+						else
+							setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), 3));
 					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
@@ -281,14 +305,14 @@ public class GameLogic : MonoBehaviour {
 				
 			k++;
 		}
-		applyPercantage ();
+		//applyPercantage ();
 		applyCoordinates ();
 
 	}
 
-	void applyPercantage(){
-
-	}
+//	void applyPercantage(){
+//
+//	}
 
 	void applyCoordinates ()
 	{
@@ -296,25 +320,26 @@ public class GameLogic : MonoBehaviour {
 		float area2 = 0;
 		for (int i = 0; i < coordinates.GetLength(0); i++)
 			for (int j = 0; j < coordinates.GetLength(1); j++) 
-		{
-			if ( coordinates[i,j] != 0)
-			{			
-				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,1] = 0;
-				alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
-				if (GameManager.instance != null) {
-					if (coordinates [i, j] == GameManager.instance.color1)
-						area1++;
-					else if (coordinates [i, j] == GameManager.instance.color2)
-						area2++;
-				} else {
-					if (coordinates [i, j] == 2)
-						area1++;
-					else if (coordinates [i, j] == 3)
-						area2++;
+			{
+				if ( coordinates[i,j] != 0)
+				{			
+					//alphaData[fieldStartPosX + i , fieldStartPosZ + j ,1] = 0;
+					for (int k = 0; k < maxPlayers + 2; k++)
+						alphaData [fieldStartPosX + i, fieldStartPosZ + j, k] = 0;
+					alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
+					if (GameManager.instance != null) {
+						if (coordinates [i, j] == GameManager.instance.color1)
+							area1++;
+						else if (coordinates [i, j] == GameManager.instance.color2)
+							area2++;
+					} else {
+						if (coordinates [i, j] == 2)
+							area1++;
+						else if (coordinates [i, j] == 3)
+							area2++;
+					}
 				}
-			}
-			
-		}	
+			}	
 
 		if (GameManager.instance != null) {
 			GameManager.instance.area1 = area1;
@@ -325,77 +350,133 @@ public class GameLogic : MonoBehaviour {
 		tData.SetAlphamaps (0, 0, alphaData);
 	}
 
-	void setCoordinates(int[,] border, int mark){
-		// THIS IS UGLY!!!
-		for (int i = 0; i < fieldSize; i++) {
-			bool flag = false;
-			for (int j = 0; j < fieldSize; j++) {
-				for (int k = 0; k < border.GetLength(0); k++) {
-					//print ("HERE!!!");
-					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
-						int borderPoints = 0;
-						int prev = j;
-						for (int l = j+1; l < fieldSize; l++) {
-							for (int m = k+1; m < border.GetLength(0); m++) {
-								if (border [m, 0]+(fieldSize/2) == i && border [m, 1]+(fieldSize/2) == l && prev != l-1) {
-									borderPoints++;
-									prev=l;
-								}
-							}
-						}
-						if (borderPoints % 2 == 0) {
-							coordinates [i, j] = mark;
-							flag = false;
-//							print ("HERE");
-						} else {
-							coordinates [i, j] = mark;
-							flag = true;
-//							print ("NOOO");
-						}
-					}
-				}
-				if (flag) {
-					coordinates [i, j] = mark;
-				}
+//	void setCoordinates(int[,] border, int mark){
+//		// THIS IS UGLY!!!
+//		for (int i = 0; i < fieldSize; i++) {
+//			bool flag = false;
+//			for (int j = 0; j < fieldSize; j++) {
+//				for (int k = 0; k < border.GetLength(0); k++) {
+//					//print ("HERE!!!");
+//					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
+//						int borderPoints = 0;
+//						int prev = j;
+//						for (int l = j+1; l < fieldSize; l++) {
+//							for (int m = k+1; m < border.GetLength(0); m++) {
+//								if (border [m, 0]+(fieldSize/2) == i && border [m, 1]+(fieldSize/2) == l && prev != l-1) {
+//									borderPoints++;
+//									prev=l;
+//								}
+//							}
+//						}
+//						if (borderPoints % 2 == 0) {
+//							coordinates [i, j] = mark;
+//							flag = false;
+////							print ("HERE");
+//						} else {
+//							coordinates [i, j] = mark;
+//							flag = true;
+////							print ("NOOO");
+//						}
+//					}
+//				}
+//				if (flag) {
+//					coordinates [i, j] = mark;
+//				}
+//			}
+//		}
+//	}
+	int getMark (int[,] border, int initMark) {
+		int borderLength = border.GetLength (0);
+		//int finalMark = initMark;
+		int[] leadingColor = new int[4];
+		for (int i = 0; i < borderLength; i++) {
+			// variable which tells us if next element of border is in the same column
+			bool endsInSameLine = i + 1 < borderLength && border [i, 0] == border [i + 1, 0];
+			// variable that tells us the last column to color
+			int endCol = border [i, 1];
+			if (endsInSameLine){
+				endCol = border [i + 1, 1];
+			}
+			for (int j = border [i, 1]; j <= endCol; j++) {
+				//LOGIC ------------
+				int color = coordinates [border [i, 0]+(fieldSize/2), j+(fieldSize/2)];
+				// checks if color is not desert or his color
+				if (color > 1 && color != initMark)
+					leadingColor [color - 2]++;
+				//------------------
+			}
+			//if (endsInSameLine)
+			//	i++;
+		}
+		int biggestArea = 0;
+		int finalMark = initMark;
+		for (int i = 0; i < leadingColor.GetLength (0); i++) {
+			if (leadingColor [i] > biggestArea) {
+				biggestArea = leadingColor [i];
+				finalMark = i + 2;
 			}
 		}
+		if (biggestArea == 0)
+			return initMark;
+		else
+			return finalMark;
 	}
-
-	void setCoordinatesOptimized(int[,] border, int mark){
-		print("i: "+ (border [border.GetLength(0)-1, 0]+(fieldSize/2)));
-		for (int i = border [0, 0]+(fieldSize/2); i <= border [border.GetLength(0)-1, 0]+(fieldSize/2); i++) {
-			bool flag = false;
-			for (int j = 0; j < fieldSize; j++) {
-				for (int k = 0; k < border.GetLength(0); k++) {
-					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
-						print ((border [k, 0]+(fieldSize/2)) + " : " + (border [k, 1]+(fieldSize/2)));
-						int borderPoints = 0;
-						int prev = border [k, 1]+(fieldSize/2);
-						for (int m = k+1; m < border.GetLength(0); m++) {
-							if (border [m, 0]+(fieldSize/2) == i && prev != border [m, 1]+(fieldSize/2)-1) {
-								borderPoints++;
-							}
-							prev=border [m, 1]+(fieldSize/2);
-						}
-						if (borderPoints % 2 == 0) {
-							coordinates [i, j] = mark;
-							flag = false;
-							//							print ("HERE");
-						} else {
-							coordinates [i, j] = mark;
-							flag = true;
-							//							print ("NOOO");
-						}
-					}
-				}
-				if (flag) {
-					coordinates [i, j] = mark;
-				}
+	int setCoordinatesOptimized2 (int[,] border, int initMark) {
+		int borderLength = border.GetLength (0);
+		for (int i = 0; i < borderLength; i++) {
+			// variable which tells us if next element of border is in the same column
+			bool endsInSameLine = i + 1 < borderLength && border [i, 0] == border [i + 1, 0];
+			// variable that tells us the last column to color
+			int endCol = border [i, 1];
+			if (endsInSameLine){
+				endCol = border [i + 1, 1];
 			}
+			for (int j = border [i, 1]; j <= endCol; j++) {
+				//LOGIC ------------
+				coordinates [border [i, 0]+(fieldSize/2), j+(fieldSize/2)] = initMark;
+				//------------------
+			}
+			//if (endsInSameLine)
+			//	i++;
 		}
-		
+		return 0;
 	}
+//	void setCoordinatesOptimized(int[,] border, int mark){
+//		print("i: "+ (border [border.GetLength(0)-1, 0]+(fieldSize/2)));
+//		for (int i = border [0, 0]+(fieldSize/2); i <= border [border.GetLength(0)-1, 0]+(fieldSize/2); i++) {
+//			bool flag = false;
+//			for (int j = 0; j < fieldSize; j++) {
+//				for (int k = 0; k < border.GetLength(0); k++) {
+//					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
+//						print ((border [k, 0]+(fieldSize/2)) + " : " + (border [k, 1]+(fieldSize/2)));
+//						int borderPoints = 0;
+//						int prev = border [k, 1]+(fieldSize/2);
+//						for (int m = k+1; m < border.GetLength(0); m++) {
+//							if (border [m, 0]+(fieldSize/2) == i && prev != border [m, 1]+(fieldSize/2)-1) {
+//								borderPoints++;
+//							}
+//							prev=border [m, 1]+(fieldSize/2);
+//						}
+//						if (borderPoints % 2 == 0) {
+//							coordinates [i, j] = mark;
+//							flag = false;
+//							//							print ("HERE");
+//						} else {
+//							coordinates [i, j] = mark;
+//							flag = true;
+//							//							print ("NOOO");
+//						}
+//					}
+//				}
+//				if (flag) {
+//					coordinates [i, j] = mark;
+//				}
+//			}
+//		}
+//		
+//	}
 
+	// RETURNS POSITION ON OUR MAP FROM PLAYER
 	int [] getPosition (GameObject player)
 	{
 		Transform playerTransform = player.transform;
@@ -403,11 +484,13 @@ public class GameLogic : MonoBehaviour {
 		Vector3 position = playerTransform.position;
 		
 		float [] pos = new float[2];
+		// transforms absolute position to position on our map
 		pos [0] = position.z / tData.size.x * tData.alphamapWidth;
 		pos [1] = position.x / tData.size.z * tData.alphamapHeight;
 		
 		int [] pos1 = new int[2];
-		
+
+		// rounds position to int
 		pos1 [0] = (int) Mathf.Round (pos [0]);
 		pos1 [1] = (int) Mathf.Round (pos [1]);
 
