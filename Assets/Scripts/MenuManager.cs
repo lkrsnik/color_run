@@ -14,7 +14,6 @@ public class MenuManager : MonoBehaviour
 	public Camera menuCamera;
 
 	private bool onPause;
-	bool set = false;
 
 
 	void Start ()
@@ -24,22 +23,21 @@ public class MenuManager : MonoBehaviour
 
 		setToMenuCamera ();
 
-
 		onPause = false;
 
 		//setting up GameManager
 		DontDestroyOnLoad(GameManager.Instance);
-		if (!set) {
-			//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-			set = true;
-		}
 
-		//DontDestroyOnLoad (mainMenu);
+
+//		if (!set) {
+//			//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+//			set = true;
+//		}
+			
 	}
 
 	void Update(){
 		if (Input.GetKeyUp (KeyCode.Escape) && !onPause && (currentMenu == hudMenu)) {
-//		if (Input.GetKeyUp (KeyCode.Escape) && !onPause) {
 			//pause
 			PauseGame();
 
@@ -58,20 +56,6 @@ public class MenuManager : MonoBehaviour
 		mainCamera.enabled = false;
 		menuCamera.enabled = true;
 	}
-
-
-//	void OnLevelWasLoaded(int level) {
-//		if (level == 0)
-//			print("Loaded Level " + level);
-//		//not working yet (menu not showing up...)
-//			Debug.Log (mainMenu);
-//		    currentMenu = mainMenu;
-//			Start ();
-////			currentMenu = mainMenu;
-////			currentMenu.IsOpen = true; 
-////			ShowMenu (mainMenu);
-//		
-//	}
 
 
 	// Activate the given menu and deactivate the current 
@@ -108,57 +92,38 @@ public class MenuManager : MonoBehaviour
 
 	}
 
+	public void GetInput0(string playerName0){
+		Debug.Log ("Name player 0: " + playerName0);
+		GameManager.instance.players[0].pName = playerName0;
+	}
+
 	public void GetInput1(string playerName1){
-		GameManager.instance.name1 = playerName1;
 		Debug.Log ("Name player 1: " + playerName1);
+		GameManager.instance.players[1].pName = playerName1;
 	}
 
-	public void GetInput2(string playerName2){
-		GameManager.instance.name2 = playerName2;
-		Debug.Log ("Name player 2: " + playerName2);
-	}
-
-	public void ColorSelected1Blue(){
-		GameManager.instance.color1 = 3;
-		GameManager.instance.cColor1 = Color.blue;
-		Debug.Log ("Blue Selected");
-	}
-	public void ColorSelected1Red(){
-		GameManager.instance.color1 = 5;
-		GameManager.instance.cColor1 = Color.red;
-		Debug.Log ("Red Selected");
-	}
-	public void ColorSelected1Green(){
-		GameManager.instance.color1 = 2;
-		GameManager.instance.cColor1 = Color.green;
+	public void ColorSelectedGreen(int playerID){
+		GameManager.instance.players[playerID].colorID = 2;
+		GameManager.instance.players[playerID].color = Color.green;
 		Debug.Log ("Green Selected");
 	}
-	public void ColorSelected1Yellow(){
-		GameManager.instance.color1 = 4;
-		GameManager.instance.cColor1 = Color.yellow;
-		Debug.Log ("Yellow Selected");
-	}
-
-	public void ColorSelected2Blue(){
-		GameManager.instance.color2 = 3;
-		GameManager.instance.cColor2 = Color.blue;
+	public void ColorSelectedBlue(int playerID){
+		GameManager.instance.players[playerID].colorID = 3;
+		GameManager.instance.players[playerID].color = Color.blue;
 		Debug.Log ("Blue Selected");
 	}
-	public void ColorSelected2Red(){
-		GameManager.instance.color2 = 5;
-		GameManager.instance.cColor2 = Color.red;
-		Debug.Log ("Red Selected");
-	}
-	public void ColorSelected2Green(){
-		GameManager.instance.color2 = 2;
-		GameManager.instance.cColor2 = Color.green;
-		Debug.Log ("Green Selected");
-	}
-	public void ColorSelected2Yellow(){
-		GameManager.instance.color2 = 4;
-		GameManager.instance.cColor2 = Color.yellow;
+	public void ColorSelectedYellow(int playerID){
+		GameManager.instance.players[playerID].colorID = 4;
+		GameManager.instance.players[playerID].color = Color.yellow;
 		Debug.Log ("Yellow Selected");
 	}
+	public void ColorSelectedRed(int playerID){
+		GameManager.instance.players[playerID].colorID = 5;
+		GameManager.instance.players[playerID].color = Color.red;
+		Debug.Log ("Red Selected");
+	}
+
+
 
 	public void StartGame(){
 		Debug.Log ("Started the game");

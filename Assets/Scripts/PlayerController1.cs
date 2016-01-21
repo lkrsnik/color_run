@@ -8,9 +8,6 @@ public class PlayerController1 : MonoBehaviour {
 	public float angle;
 	public int player;
 
-	void Awake() {
-		//DontDestroyOnLoad(transform.gameObject);
-	}
 
 	void Start()
 	{
@@ -22,10 +19,10 @@ public class PlayerController1 : MonoBehaviour {
 	{
 		float moveH;
 		switch (player) {
-			case 1:
+			case 0:
 				moveH = Input.GetAxis ("Horizontal_AD");
 				break;
-			case 2:
+			case 1:
 				moveH = Input.GetAxis ("Horizontal_LR");
 				break;
 			default:

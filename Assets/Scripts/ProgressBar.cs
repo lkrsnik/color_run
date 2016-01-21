@@ -2,24 +2,25 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ProgressBar2 : MonoBehaviour {
+public class ProgressBar : MonoBehaviour {
 	
-	
+	public int ID;
 	// Use this for initialization
 	void Start () {
-		
-		
+	
+		 
 	}
 	
 	// Update is called once per frame
 	void Update () {
+	
 
-		float area = GameManager.instance.area2;
+//		float area = 0.4f;
+		float area = GameManager.instance.players[ID].areaColored;
 		float nArea = GameManager.instance.normalizeArea (area);
 		Image image = GetComponent<Image> ();
-
-		image.color = GameManager.instance.cColor2;
+		image.color = GameManager.instance.players[ID].color;
 		image.fillAmount = nArea;
-		
+
 	}
 }

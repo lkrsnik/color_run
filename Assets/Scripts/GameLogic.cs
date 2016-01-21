@@ -278,19 +278,19 @@ public class GameLogic : MonoBehaviour {
 					//res.toArray();
 					//res.toOrderedArray();
 					if (GameManager.instance != null) {
-						if (player.name == "Player1")
+						if (player.name == "Player0")
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
 							//getMark(res.toOrderedArray (), GameManager.instance.color1)
 							if (eatArea)
-								setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.color1);
+							setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.players[0].colorID);
 							else
-								setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.color1));
-						else if (player.name == "Player2")
+							setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.players[0].colorID));
+						else if (player.name == "Player1")
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
 							if (eatArea)
-								setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.color2);
+							setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.players[1].colorID);
 							else
-								setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.color2));
+							setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.players[1].colorID));
 					} else
 						if (eatArea)
 							setCoordinatesOptimized2 (res.toOrderedArray (), 3);
@@ -328,9 +328,9 @@ public class GameLogic : MonoBehaviour {
 						alphaData [fieldStartPosX + i, fieldStartPosZ + j, k] = 0;
 					alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
 					if (GameManager.instance != null) {
-						if (coordinates [i, j] == GameManager.instance.color1)
+						if (coordinates [i, j] == GameManager.instance.players[0].colorID)
 							area1++;
-						else if (coordinates [i, j] == GameManager.instance.color2)
+						else if (coordinates [i, j] == GameManager.instance.players[1].colorID)
 							area2++;
 					} else {
 						if (coordinates [i, j] == 2)
@@ -342,8 +342,8 @@ public class GameLogic : MonoBehaviour {
 			}	
 
 		if (GameManager.instance != null) {
-			GameManager.instance.area1 = area1;
-			GameManager.instance.area2 = area2;
+			GameManager.instance.players[0].areaColored = area1;
+			GameManager.instance.players[1].areaColored = area2;
 		}
 
 		
