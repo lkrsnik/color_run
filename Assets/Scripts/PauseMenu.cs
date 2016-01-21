@@ -4,52 +4,52 @@ using System.Collections;
 public class PauseMenu : MonoBehaviour {
 
 
-	private Animator anim;
-	private bool panelDisplayed;
-	public GameObject panel;
-
-	void Start(){
-		anim = panel.GetComponent<Animator> ();
-		anim.enabled = false;
-		panelDisplayed = false;
-	}
-
-	void Update(){
-		if (Input.GetKeyUp (KeyCode.Escape) && !panelDisplayed) {
-			//pause
-			ShowPanel ();
-		} else if (Input.GetKeyUp (KeyCode.Escape) && panelDisplayed) {
-			HidePanel();
-		}
-	}
-
-	private void ShowPanel(){
-		anim.enabled = true;
-		anim.Play ("PauseSlideIn");
-		panelDisplayed = true;
-		Time.timeScale = 0;
-	}
-
-	private void HidePanel(){
-		panelDisplayed = false;
-		anim.Play ("PauseSlideOut");
-		Time.timeScale = 1;	
-	}
-
-	public void ReturnToMain(){
-		Application.LoadLevel (0);
-
-	}
-
-	public void RestartLevel(){
-		Application.LoadLevel (1);
-		GameManager.instance.ResetLevel ();
-		HidePanel ();
-	}
-
-	public void Resume(){
-		HidePanel ();
-	}
+//	private Animator anim;
+//	private bool panelDisplayed;
+//	public GameObject panel;
+//
+//	void Start(){
+//		anim = panel.GetComponent<Animator> ();
+//		anim.enabled = false;
+//		panelDisplayed = false;
+//	}
+//
+//	void Update(){
+//		if (Input.GetKeyUp (KeyCode.Escape) && !panelDisplayed) {
+//			//pause
+//			ShowPanel ();
+//		} else if (Input.GetKeyUp (KeyCode.Escape) && panelDisplayed) {
+//			HidePanel();
+//		}
+//	}
+//
+//	private void ShowPanel(){
+//		anim.enabled = true;
+//		anim.Play ("PauseSlideIn");
+//		panelDisplayed = true;
+//		Time.timeScale = 0;
+//	}
+//
+//	private void HidePanel(){
+//		panelDisplayed = false;
+//		anim.Play ("PauseSlideOut");
+//		Time.timeScale = 1;	
+//	}
+//
+//	public void ReturnToMain(){
+//		Application.LoadLevel (0);
+//
+//	}
+//
+//	public void RestartLevel(){
+//		Application.LoadLevel (1);
+//		GameManager.instance.ResetLevel ();
+//		HidePanel ();
+//	}
+//
+//	public void Resume(){
+//		HidePanel ();
+//	}
 //	private CanvasGroup canvasGroup;
 //	bool isPause = false;
 //	

@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour {
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
+	public Vector3 initialPos1;
+	public Vector3 initialPos2;
+
 
 	public int nOfPlayers;
 
@@ -71,6 +74,7 @@ public class GameManager : MonoBehaviour {
 //	public static GameObject p1;
 
 	public void ResetLevel(){
+		Debug.Log ("Reset Level");
 		timerInSeconds = startTime;
 		area1 = 0.0f;
 		area2 = 0.0f;
@@ -79,6 +83,14 @@ public class GameManager : MonoBehaviour {
 		Debug.Log ("Color1: " + color1);
 		Debug.Log ("Color2: " + color2);
 
+
+		//reset position
+
+		GameObject p1 = GameObject.FindGameObjectWithTag ("Player" + 1);
+		Debug.Log ("P1: " + p1.ToString());
+		p1.transform.position = initialPos1;
+		GameObject p2 = GameObject.FindGameObjectWithTag ("Player" + 2);
+		p2.transform.position = initialPos2;
 
 		//get sphere objects
 		//Debug.Log (GameObject.FindGameObjectWithTag ("Player1"));
@@ -129,11 +141,19 @@ public class GameManager : MonoBehaviour {
 		if (GameObject.FindGameObjectWithTag ("Player1") && GameObject.FindGameObjectWithTag ("Player2") && !set) {
 			SetMaterial1();
 			SetMaterial2();
+			initialPos1 = GetPosition (1);
+			initialPos2 = GetPosition (2);
 			set = true;
 		}
 
 
 
+	}
+
+	Vector3 GetPosition(int playerID){
+		GameObject p = GameObject.FindGameObjectWithTag ("Player" + playerID);
+		Debug.Log ("Position: " + p.transform.position);
+		return p.transform.position;
 	}
 
 	public float normalizeArea(float a){

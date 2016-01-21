@@ -9,7 +9,7 @@ public class PlayerController1 : MonoBehaviour {
 	public int player;
 
 	void Awake() {
-		DontDestroyOnLoad(transform.gameObject);
+		//DontDestroyOnLoad(transform.gameObject);
 	}
 
 	void Start()

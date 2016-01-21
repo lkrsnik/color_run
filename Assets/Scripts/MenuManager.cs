@@ -1,34 +1,77 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
 	// Currently open menu. Set the initial reference in the Inspector 
 	public Menu currentMenu;
-
 	public Menu mainMenu;
+	public Menu pauseMenu;
+	public Menu hudMenu;
+
+	public Camera mainCamera;
+	public Camera menuCamera;
+
+	private bool onPause;
+	bool set = false;
+
 
 	void Start ()
 	{
 		// For showing the main menu
 		ShowMenu (currentMenu);  
+
+		setToMenuCamera ();
+
+
+		onPause = false;
+
 		//setting up GameManager
 		DontDestroyOnLoad(GameManager.Instance);
-		DontDestroyOnLoad (mainMenu);
+		if (!set) {
+			//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+			set = true;
+		}
+
+		//DontDestroyOnLoad (mainMenu);
 	}
 
-	void OnLevelWasLoaded(int level) {
-		if (level == 0)
-			print("Loaded Level " + level);
-		//not working yet (menu not showing up...)
-			Debug.Log (mainMenu);
-		    currentMenu = mainMenu;
-			Start ();
-//			currentMenu = mainMenu;
-//			currentMenu.IsOpen = true; 
-//			ShowMenu (mainMenu);
-		
+	void Update(){
+		if (Input.GetKeyUp (KeyCode.Escape) && !onPause && (currentMenu == hudMenu)) {
+//		if (Input.GetKeyUp (KeyCode.Escape) && !onPause) {
+			//pause
+			PauseGame();
+
+		} else if (Input.GetKeyUp (KeyCode.Escape) && onPause) {
+			ResumeGame ();
+			ShowMenu (hudMenu);
+		}
 	}
+
+	void setToMainCamera(){
+		mainCamera.enabled = true;
+		menuCamera.enabled = false;
+	}
+
+	void setToMenuCamera(){
+		mainCamera.enabled = false;
+		menuCamera.enabled = true;
+	}
+
+
+//	void OnLevelWasLoaded(int level) {
+//		if (level == 0)
+//			print("Loaded Level " + level);
+//		//not working yet (menu not showing up...)
+//			Debug.Log (mainMenu);
+//		    currentMenu = mainMenu;
+//			Start ();
+////			currentMenu = mainMenu;
+////			currentMenu.IsOpen = true; 
+////			ShowMenu (mainMenu);
+//		
+//	}
 
 
 	// Activate the given menu and deactivate the current 
@@ -39,6 +82,11 @@ public class MenuManager : MonoBehaviour
 			currentMenu.IsOpen = false;
 		currentMenu = menu;
 		currentMenu.IsOpen = true; 
+		if (currentMenu == hudMenu) {
+			setToMainCamera ();
+		} else {
+			setToMenuCamera ();
+		}
 	}
 
 	public void Quit ()
@@ -52,7 +100,8 @@ public class MenuManager : MonoBehaviour
 		if (currentMenu != null)
 			currentMenu.IsOpen = false;
 		currentMenu = null;
-		Application.LoadLevel (level);
+//		Application.LoadLevel (level);
+		SceneManager.LoadScene(level);
 
 		// reset level properties 
 		GameManager.instance.ResetLevel ();
@@ -111,6 +160,32 @@ public class MenuManager : MonoBehaviour
 		Debug.Log ("Yellow Selected");
 	}
 
+	public void StartGame(){
+		Debug.Log ("Started the game");
+		//Application.LoadLevel (0);
+		//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		GameManager.instance.ResetLevel ();
+		ShowMenu (hudMenu);
+	}
+
+	public void PauseGame(){
+		Debug.Log ("Pressed: ESC -> pause ");
+		onPause = true;
+		ShowMenu (pauseMenu);
+		Time.timeScale = 0;
+	}
+
+	public void ResumeGame(){
+		Debug.Log ("Pressed: ESC -> UNpause ");
+		onPause = false;
+		Time.timeScale = 1;
+//		ShowMenu (hudMenu);
+	}
+
+	public void RestartLevel(){
+		//Application.LoadLevel (0);
+		GameManager.instance.ResetLevel ();
+	}
 
 
 }
