@@ -403,8 +403,9 @@ public class GameLogic : MonoBehaviour {
 			printS += "Color" + i + " = " + leadingColor [i] + " || ";
 		}
 		print(printS);
-		if (biggestArea == 0)
+		if (biggestArea == 0 || eatArea)
 			finalColor = colorID;
+
 
 		int [,] changedCoord = checkedCoord.toOrderedArray (true);
 		for (int i = 0; i < changedCoord.GetLength (0); i++) {
