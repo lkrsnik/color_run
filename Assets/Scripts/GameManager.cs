@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour {
 //		GameObject terrain = GameObject.FindGameObjectWithTag ("Terrain");
 //		Debug.Log ("Terrain: " + terrain.ToString());
 		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
-		gameLogicScript.initializeTerrainTexture ();
+		gameLogicScript.restartTextures ();
 		//terrain.initializeTerrainTexture();
 
 	}

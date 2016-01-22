@@ -231,12 +231,29 @@ public class GameLogic : MonoBehaviour {
 			}	
 		
 		tData.SetAlphamaps (0, 0, alphaData);
-		Debug.Log ("GameLogic: Initialized Terrain" );
 		
 //		print (tData.alphamapHeight);
 //		print (tData.alphamapWidth);
 
 
+	}
+
+	public void restartTextures() {
+		for (int i = 0; i < fieldSize; i++) {
+			for (int j = 0; j < fieldSize; j++) {
+				coordinates [i, j] = 1;
+			}
+		}
+		// erases tail
+		int k = 0;
+		foreach (GameObject player in players) {
+			int[] posCoor = { pos [k, 0], pos [k, 1] };
+			activePath [k] = new TreeSet (posCoor, null, Time.time);
+			player.GetComponent<TrailRenderer> ().Clear ();
+			k++;
+		}
+
+		applyCoordinates ();
 	}
 
 //	public void SetPercentage(double perc){
@@ -270,7 +287,7 @@ public class GameLogic : MonoBehaviour {
 				// adds the latest element to our path
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
-					TreeSet res = activePath[k].getBorder();
+					TreeSet borderTree = activePath[k].getBorder();
 
 					//int[] posCoor = {0, 0};
 					// erases tail
@@ -282,27 +299,29 @@ public class GameLogic : MonoBehaviour {
 					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
 					//res.toArray();
 					//res.toOrderedArray();
-					bool horiz = true;
+					bool horiz = false;
 
 					if (GameManager.instance != null) {
-						if (player.name == "Player0")
+						if (player.name == "Player0") {
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
 							//getMark(res.toOrderedArray (), GameManager.instance.color1)
-							if (eatArea)
-								setCoordinatesOptimized2(res.toOrderedArray (horiz), GameManager.instance.players[0].colorID);
-							else
-								setCoordinatesOptimized2(res.toOrderedArray (horiz), getMark(res.toOrderedArray (horiz), GameManager.instance.players[0].colorID));
-						else if (player.name == "Player1")
+							if (eatArea) {
+								setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [0].colorID);
+							} else {
+								setCoordinatesOptimized2 (borderTree, horiz, getMark (borderTree, horiz, GameManager.instance.players [0].colorID));
+							}
+						} else if (player.name == "Player1") {
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
 							if (eatArea)
-								setCoordinatesOptimized2(res.toOrderedArray (horiz), GameManager.instance.players[1].colorID);
+								setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [1].colorID);
 							else
-								setCoordinatesOptimized2(res.toOrderedArray (horiz), getMark(res.toOrderedArray (horiz), GameManager.instance.players[1].colorID));
+								setCoordinatesOptimized2 (borderTree, horiz, getMark (borderTree, horiz, GameManager.instance.players [1].colorID));
+						}
 					} else
 						if (eatArea)
-							setCoordinatesOptimized2 (res.toOrderedArray (horiz), 3);
+							setCoordinatesOptimized2 (borderTree, horiz, 3);
 						else
-							setCoordinatesOptimized2(res.toOrderedArray (horiz), getMark(res.toOrderedArray (horiz), 3));
+							setCoordinatesOptimized2(borderTree, horiz, getMark(borderTree, horiz, 3));
 					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
@@ -392,7 +411,8 @@ public class GameLogic : MonoBehaviour {
 //			}
 //		}
 //	}
-	int getMark (int[,] border, int initMark) {
+	int getMark (TreeSet borderTree, bool horiz, int initMark) {
+		int [,] border = borderTree.toOrderedArray (horiz);
 		int borderLength = border.GetLength (0);
 		//int finalMark = initMark;
 		int[] leadingColor = new int[4];
@@ -428,19 +448,33 @@ public class GameLogic : MonoBehaviour {
 		else
 			return finalMark;
 	}
-	int setCoordinatesOptimized2 (int[,] border, int initMark) {
+	int setCoordinatesOptimized2 (TreeSet borderTree, bool horiz, int initMark) {
+		int [,] border = borderTree.toOrderedArray (horiz);
+		// preparation for horizontal or vertical rendering
+		int n1;
+		int n2;
+		if (horiz) {
+			n1 = 0;
+			n2 = 1;
+		} else {
+			n1 = 1;
+			n2 = 0;
+		}
 		int borderLength = border.GetLength (0);
 		for (int i = 0; i < borderLength; i++) {
 			// variable which tells us if next element of border is in the same column
-			bool endsInSameLine = i + 1 < borderLength && border [i, 0] == border [i + 1, 0];
+			bool endsInSameLine = i + 1 < borderLength && border [i, n1] == border [i + 1, n1];
 			// variable that tells us the last column to color
-			int endCol = border [i, 1];
+			int endCol = border [i, n2];
 			if (endsInSameLine){
-				endCol = border [i + 1, 1];
+				endCol = border [i + 1, n2];
 			}
-			for (int j = border [i, 1]; j <= endCol; j++) {
+			for (int j = border [i, n2]; j <= endCol; j++) {
 				//LOGIC ------------
-				coordinates [border [i, 0]+(fieldSize/2), j+(fieldSize/2)] = initMark;
+				if (horiz)
+					coordinates [border [i, n1]+(fieldSize/2), j+(fieldSize/2)] = initMark;
+				else
+					coordinates [j+(fieldSize/2), border [i, n1]+(fieldSize/2)] = initMark;
 				//------------------
 			}
 			//if (endsInSameLine)
