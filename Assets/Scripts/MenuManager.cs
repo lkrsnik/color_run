@@ -96,13 +96,11 @@ public class MenuManager : MonoBehaviour
 	public void GetInput0(string playerName0){
 		Debug.Log ("Name player 0: " + playerName0);
 		GameManager.instance.players[0].pName = playerName0;
-		GameManager.instance.players[0].id = 0;
 	}
 
 	public void GetInput1(string playerName1){
 		Debug.Log ("Name player 1: " + playerName1);
 		GameManager.instance.players[1].pName = playerName1;
-		GameManager.instance.players[1].id = 1;
 	}
 
 	public void ColorSelectedGreen(int playerID){

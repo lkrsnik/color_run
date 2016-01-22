@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
 	public MenuManager menuScript;
 
 //	public float startTime = 2*60;
-	public float startTime = 30;
+	public float startTime = 10;
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
@@ -118,6 +118,11 @@ public class GameManager : MonoBehaviour {
 		Time.timeScale = 0;
 		gameFinished = false;
 
+		//set player ids
+
+		GameManager.instance.players[0].id = 0;
+		GameManager.instance.players[1].id = 1;
+
 		//find Menu script
 		menuScript = GameObject.FindObjectOfType(typeof(MenuManager)) as MenuManager;
 
@@ -148,18 +153,22 @@ public class GameManager : MonoBehaviour {
 	int SelectWinner(){
 		float maxArea = 0.0f;
 		int wID = 0;
-		foreach (pData player in players) {
-			if (player.areaColored > maxArea) {
-				maxArea = player.areaColored;
-				wID = player.id;
+		for (int i = 0; i < nP; i++) {
+			if (players[i].areaColored > maxArea) {
+				maxArea = players[i].areaColored;
+				wID = players[i].id;
 			}
+			Debug.Log ("Player" + players[i].id + ", area = " + players[i].areaColored);
+
 		}
-		if (wID == 0)
+		if (wID == 0) {
 			secondID = 1;
-		else
+		} else {
 			secondID = 0;
+		}
+			
 		
-		Debug.Log ("Winner: Player" + winnerID + ", area = " + maxArea);
+		Debug.Log ("Winner: Player" + GameManager.instance.winnerID + ", area = " + maxArea);
 		return wID;
 	}
 
