@@ -7,11 +7,11 @@ public class TreeSet
 {
 	public int[] coordinates;
 	public TreeSet son;
-	public float time;
-	public TreeSet(int[] coor, TreeSet s, float t){
+	public float timeorcolor;
+	public TreeSet(int[] coor, TreeSet s, float tc){
 		coordinates = coor;
 		son = s;
-		time = t;
+		timeorcolor = tc;
 	}
 
 	// checks if tail intersects
@@ -23,7 +23,7 @@ public class TreeSet
 		return son.contains (coor);
 	}
 	public string print(string text){
-		text += coordinates [0] + " : " + coordinates [1] + " - " + time + " || ";
+		text += coordinates [0] + " : " + coordinates [1] + " - " + timeorcolor + " || ";
 		if (son == null)
 			return text;
 		else
@@ -137,7 +137,7 @@ public class TreeSet
 
 	// DELETES TOO OLD NODES
 	public void deleteOld(float tailTime){
-		if (this.son == null || Time.time - this.son.time > tailTime)
+		if (this.son == null || Time.time - this.son.timeorcolor > tailTime)
 			this.son = null;
 		else
 			this.son.deleteOld (tailTime);
@@ -299,29 +299,18 @@ public class GameLogic : MonoBehaviour {
 					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
 					//res.toArray();
 					//res.toOrderedArray();
-					bool horiz = false;
+					//bool horiz = false;
 
 					if (GameManager.instance != null) {
 						if (player.name == "Player0") {
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
 							//getMark(res.toOrderedArray (), GameManager.instance.color1)
-							if (eatArea) {
-								setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [0].colorID);
-							} else {
-								setCoordinatesOptimized2 (borderTree, horiz, getMark (borderTree, horiz, GameManager.instance.players [0].colorID));
-							}
+							setCoordinates(borderTree, GameManager.instance.players [0].colorID);
+							//setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [0].colorID);
 						} else if (player.name == "Player1") {
-							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
-							if (eatArea)
-								setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [1].colorID);
-							else
-								setCoordinatesOptimized2 (borderTree, horiz, getMark (borderTree, horiz, GameManager.instance.players [1].colorID));
+							setCoordinates(borderTree, GameManager.instance.players [1].colorID);
 						}
-					} else
-						if (eatArea)
-							setCoordinatesOptimized2 (borderTree, horiz, 3);
-						else
-							setCoordinatesOptimized2(borderTree, horiz, getMark(borderTree, horiz, 3));
+					}
 					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
@@ -334,6 +323,93 @@ public class GameLogic : MonoBehaviour {
 		//applyPercantage ();
 		applyCoordinates ();
 
+	}
+
+	void setCoordinates (TreeSet borderTree, int colorID)
+	{
+		int[,] horizCoord = getCoordinatesOptimized2 (borderTree, true);
+		int[,] vertCoord = getCoordinatesOptimized2 (borderTree, false);
+		int[] leadingColor = new int[4];
+		// current position in vertCoord
+		int j = 0;
+		TreeSet checkedCoord = null;
+
+		for (int i = 0; i < horizCoord.GetLength (0); i++) {
+			//if we exceeded upper limit of j stop
+			if (j >= vertCoord.GetLength (0))
+				break;
+
+			// to eliminate repeted comparisons
+			// if next coordinate is the same jump over
+			if (i + 1 < horizCoord.GetLength(0) && coordEq(horizCoord, i, horizCoord, i + 1))
+				continue;
+			while (j + 1 < vertCoord.GetLength (0) && coordEq (vertCoord, j, vertCoord, j + 1))
+				j++;
+
+			// if coordinates are in both arrays
+			if (coordEq (horizCoord, i, vertCoord, j)) {
+				int[] posCoor = { horizCoord [i, 0], horizCoord [i, 1] };
+				checkedCoord = new TreeSet (posCoor, checkedCoord, coordinates [horizCoord [i, 0], horizCoord [i, 1]]);
+
+				// get the leading color
+				int color = coordinates [horizCoord [i, 0], horizCoord [i, 1]] - 2;
+				if (color > 1 && color != colorID)
+					leadingColor [color - 2]++;
+			} 
+			// if not there are to options, coordinate is in vertical but not horizontal rendering mode or reversed
+			else {
+				// if both coordinates are in the same line
+				if (horizCoord [i, 0] == vertCoord [j, 0]) {
+					//  if horizontal coordinate is larger than vertical it means that vertical coordinate is wrong
+					if (horizCoord [i, 1] > vertCoord [j, 1]) {
+						// go to next j
+						j++;
+						// i must stay the same, so lower it by one
+						i--;
+						continue;
+					} 
+					// if horizontal coordinate is smaller than vertical it means that horizontal coordinate is wrong
+					else {
+						continue;
+					}
+				}
+				// if coordinates are in different lines
+				else {
+					// if horizontal coordinate is larger than vertical it means that vertical coordinate is wrong
+					if (horizCoord [i, 0] > vertCoord [j, 0]) {
+						// go to next j
+						j++;
+						// i must stay the same, so lower it by one
+						i--;
+						continue;
+					}
+					// if horizontal coordinate is smaller than vertical it means that horizontal coordinate is wrong
+					else {
+						continue;
+					}
+				}
+			}
+		}
+
+		// get the best color
+		int biggestArea = 0;
+		int finalColor = colorID;
+		for (int i = 0; i < leadingColor.GetLength (0); i++) {
+			if (leadingColor [i] > biggestArea) {
+				biggestArea = leadingColor [i];
+				finalColor = i + 2;
+			}
+		}
+		if (biggestArea == 0)
+			finalColor = colorID;
+
+		int [,] changedCoord = checkedCoord.toOrderedArray (true);
+		for (int i = 0; i < changedCoord.GetLength (0); i++) {
+			coordinates [changedCoord [i, 0], changedCoord [i, 1]] = finalColor;
+		}
+	}
+	bool coordEq (int [,] coord1, int pos1, int [,] coord2, int pos2) {
+		return coord1 [pos1, 0] == coord2 [pos2, 0] && coord1 [pos1, 1] == coord2 [pos2, 1];
 	}
 
 //	void applyPercantage(){
@@ -368,8 +444,8 @@ public class GameLogic : MonoBehaviour {
 			}	
 
 		if (GameManager.instance != null) {
-			GameManager.instance.players[0].areaColored = area1;
-			GameManager.instance.players[1].areaColored = area2;
+			GameManager.instance.players[0].areaColored = area1/(fieldSize*fieldSize);
+			GameManager.instance.players[1].areaColored = area2/(fieldSize*fieldSize);
 		}
 
 		
@@ -448,12 +524,16 @@ public class GameLogic : MonoBehaviour {
 		else
 			return finalMark;
 	}
-	int setCoordinatesOptimized2 (TreeSet borderTree, bool horiz, int initMark) {
-		int [,] border = borderTree.toOrderedArray (horiz);
+	int[,] getCoordinatesOptimized2 (TreeSet borderTree, bool horizRendering) {
+		int [,] border = borderTree.toOrderedArray (horizRendering);
+
+		// area which will get colored
+		TreeSet colorArea = null;
+
 		// preparation for horizontal or vertical rendering
 		int n1;
 		int n2;
-		if (horiz) {
+		if (horizRendering) {
 			n1 = 0;
 			n2 = 1;
 		} else {
@@ -471,16 +551,21 @@ public class GameLogic : MonoBehaviour {
 			}
 			for (int j = border [i, n2]; j <= endCol; j++) {
 				//LOGIC ------------
-				if (horiz)
-					coordinates [border [i, n1]+(fieldSize/2), j+(fieldSize/2)] = initMark;
-				else
-					coordinates [j+(fieldSize/2), border [i, n1]+(fieldSize/2)] = initMark;
+				if (horizRendering) {
+					int[] posCoor = { border [i, n1] + (fieldSize / 2), j + (fieldSize / 2) };
+					colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, n1] + (fieldSize / 2), j + (fieldSize / 2)]);
+					//coordinates [border [i, n1] + (fieldSize / 2), j + (fieldSize / 2)] = initMark;
+				} else {
+					int[] posCoor = { j + (fieldSize / 2), border [i, n1] + (fieldSize / 2) };
+					colorArea = new TreeSet (posCoor, colorArea, coordinates [j + (fieldSize / 2), border [i, n1] + (fieldSize / 2)]);
+					//coordinates [j + (fieldSize / 2), border [i, n1] + (fieldSize / 2)] = initMark;
+				}
 				//------------------
 			}
 			//if (endsInSameLine)
 			//	i++;
 		}
-		return 0;
+		return colorArea.toOrderedArray(true);
 	}
 //	void setCoordinatesOptimized(int[,] border, int mark){
 //		print("i: "+ (border [border.GetLength(0)-1, 0]+(fieldSize/2)));
