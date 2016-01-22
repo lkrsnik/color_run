@@ -131,6 +131,7 @@ public class MenuManager : MonoBehaviour
 		//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		GameManager.instance.ResetLevel ();
 		ShowMenu (hudMenu);
+		Time.timeScale = 1;
 	}
 
 	public void PauseGame(){

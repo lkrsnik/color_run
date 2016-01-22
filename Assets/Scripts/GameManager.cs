@@ -5,6 +5,9 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 
+	//public GameLogic gl;
+	public GameLogic gameLogicScript;
+
 	public float startTime = 2*60;
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
@@ -66,6 +69,7 @@ public class GameManager : MonoBehaviour {
 	public void ResetLevel(){
 		Debug.Log ("Reset Level");
 		timerInSeconds = startTime;
+		Time.timeScale = 1;
 
 
 		for (int i = 0; i < nP; i++) {
@@ -74,6 +78,7 @@ public class GameManager : MonoBehaviour {
 			//reset position
 			GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
 			Debug.Log ("Player" + i + ": " + p.ToString());
+			//p.rigidbody.velocity = Vector3.zero;
 			p.transform.position = players [i].initialPos;
 			//set material
 			SetMaterial(i, players[i].colorID);
@@ -81,7 +86,11 @@ public class GameManager : MonoBehaviour {
 
 
 		// TODO: clear all colored area
-
+//		GameObject terrain = GameObject.FindGameObjectWithTag ("Terrain");
+//		Debug.Log ("Terrain: " + terrain.ToString());
+		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
+		gameLogicScript.initializeTerrainTexture ();
+		//terrain.initializeTerrainTexture();
 
 	}
 
@@ -103,6 +112,8 @@ public class GameManager : MonoBehaviour {
 		//get the start-position
 		players[1].initialPos = GetPosition (1);
 		players[0].initialPos = GetPosition (0);
+		//pause Game
+		Time.timeScale = 0;
 
 	}
 

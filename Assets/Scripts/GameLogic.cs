@@ -231,6 +231,7 @@ public class GameLogic : MonoBehaviour {
 			}	
 		
 		tData.SetAlphamaps (0, 0, alphaData);
+		Debug.Log ("GameLogic: Initialized Terrain" );
 		
 //		print (tData.alphamapHeight);
 //		print (tData.alphamapWidth);
