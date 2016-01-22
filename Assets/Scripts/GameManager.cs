@@ -163,15 +163,15 @@ public class GameManager : MonoBehaviour {
 		return wID;
 	}
 
-	public float normalizeArea(float a){
-		float aMin = 0.0f;
-		float aMax = 100 * 100;
-
-		float normalized = (a - aMin) / (aMax - aMin);
-
-		return normalized;
-
-	}
+//	public float normalizeArea(float a){
+//		float aMin = 0.0f;
+//		float aMax = 60 * 60;
+//
+//		float normalized = (a - aMin) / (aMax - aMin);
+//
+//		return normalized;
+//
+//	}
 
 	public void SetMaterial(int playerID, int color){
 		Debug.Log ("setting material for player" + playerID + "to: " + color);
