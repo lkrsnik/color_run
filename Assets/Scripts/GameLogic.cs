@@ -58,7 +58,7 @@ public class TreeSet
 		//printArray (array);
 		return array;
 	}
-	public int[,] toOrderedArray(){
+	public int[,] toOrderedArray(bool horiz){
 		//Debug.Log ("HEREEEEEE1!!!");
 		int length = this.length ();
 		int [,] array = new int [length, 2];
@@ -66,7 +66,7 @@ public class TreeSet
 //		Debug.Log (this.print (""));
 //		Debug.Log (curr.print (""));
 		for (int i = 0; i < length; i++) {
-			TreeSet minAncestor = curr.findMinAncestor();
+			TreeSet minAncestor = curr.findMinAncestor(horiz);
 			array[i,0] = minAncestor.coordinates[0];
 			array[i,1] = minAncestor.coordinates[1];
 			curr = curr.eraseNode(minAncestor);
@@ -112,13 +112,17 @@ public class TreeSet
 		return this;
 
 	}
-	private TreeSet findMinAncestor(){
+	private TreeSet findMinAncestor(bool horiz){
 		TreeSet minNode = new TreeSet (new int[]{ 100, 100 }, null, 0);
 		TreeSet curr = this;
 		int length = this.length ();
 		for (int i = 0; i < length; i++) {
-			if (curr.coordinates[0]<minNode.coordinates[0] || (curr.coordinates[0] == minNode.coordinates[0] && curr.coordinates[1]<minNode.coordinates[1])){
-				minNode = curr;
+			if (horiz) {
+				if (curr.coordinates [0] < minNode.coordinates [0] || (curr.coordinates [0] == minNode.coordinates [0] && curr.coordinates [1] < minNode.coordinates [1]))
+					minNode = curr;
+			} else {
+				if (curr.coordinates [1] < minNode.coordinates [1] || (curr.coordinates [1] == minNode.coordinates [1] && curr.coordinates [0] < minNode.coordinates [0]))
+					minNode = curr;
 			}
 			curr = curr.next();
 		}
@@ -208,7 +212,7 @@ public class GameLogic : MonoBehaviour {
 	}
 
 	// SELECTS A FIELD TEXTURE DESERT AND APPLIES IT TO WASTELAND
-	void initializeTerrainTexture (){
+	public void initializeTerrainTexture (){
 		tData = Terrain.activeTerrain.terrainData;
 		
 		alphaData = tData.GetAlphamaps (0, 0, tData.alphamapWidth, tData.alphamapHeight);
@@ -277,25 +281,27 @@ public class GameLogic : MonoBehaviour {
 					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
 					//res.toArray();
 					//res.toOrderedArray();
+					bool horiz = true;
+
 					if (GameManager.instance != null) {
 						if (player.name == "Player0")
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
 							//getMark(res.toOrderedArray (), GameManager.instance.color1)
 							if (eatArea)
-							setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.players[0].colorID);
+								setCoordinatesOptimized2(res.toOrderedArray (horiz), GameManager.instance.players[0].colorID);
 							else
-							setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.players[0].colorID));
+								setCoordinatesOptimized2(res.toOrderedArray (horiz), getMark(res.toOrderedArray (horiz), GameManager.instance.players[0].colorID));
 						else if (player.name == "Player1")
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color2);
 							if (eatArea)
-							setCoordinatesOptimized2(res.toOrderedArray (), GameManager.instance.players[1].colorID);
+								setCoordinatesOptimized2(res.toOrderedArray (horiz), GameManager.instance.players[1].colorID);
 							else
-							setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), GameManager.instance.players[1].colorID));
+								setCoordinatesOptimized2(res.toOrderedArray (horiz), getMark(res.toOrderedArray (horiz), GameManager.instance.players[1].colorID));
 					} else
 						if (eatArea)
-							setCoordinatesOptimized2 (res.toOrderedArray (), 3);
+							setCoordinatesOptimized2 (res.toOrderedArray (horiz), 3);
 						else
-							setCoordinatesOptimized2(res.toOrderedArray (), getMark(res.toOrderedArray (), 3));
+							setCoordinatesOptimized2(res.toOrderedArray (horiz), getMark(res.toOrderedArray (horiz), 3));
 					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
