@@ -148,6 +148,10 @@ public class MenuManager : MonoBehaviour
 		Time.timeScale = 1;
 //		ShowMenu (hudMenu);
 	}
+		
+	public void setTime0(){
+		Time.timeScale = 0;
+	}
 
 	public void RestartLevel(){
 		//Application.LoadLevel (0);
@@ -159,6 +163,15 @@ public class MenuManager : MonoBehaviour
 		Debug.Log ("Finished Game");
 		Debug.Log ("Winner: Player" + GameManager.instance.winnerID);
 		Time.timeScale = 0;
+		GameManager.instance.gameFinished = true;
+	}
+
+	public void Level1(){
+		Debug.Log ("Mode1 Selected");
+	}
+
+	public void Level2(){
+		Debug.Log ("Mode2 Selected");
 	}
 
 

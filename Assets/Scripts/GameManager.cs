@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour {
 	public int winnerID;
 	public int secondID;
 
-	bool gameFinished;
+	public bool gameFinished;
 
 	// Creates an instance of Gamemanager as a gameobject if an instance does not exist
 	public static GameManager Instance
@@ -91,7 +91,6 @@ public class GameManager : MonoBehaviour {
 		}
 
 		//reset ground coloring
-		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
 		gameLogicScript.restartTextures ();
 
 	}
@@ -125,6 +124,8 @@ public class GameManager : MonoBehaviour {
 
 		//find Menu script
 		menuScript = GameObject.FindObjectOfType(typeof(MenuManager)) as MenuManager;
+		//find logic script
+		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
 
 	}
 
@@ -158,7 +159,7 @@ public class GameManager : MonoBehaviour {
 				maxArea = players[i].areaColored;
 				wID = players[i].id;
 			}
-			Debug.Log ("Player" + players[i].id + ", area = " + players[i].areaColored);
+//			Debug.Log ("Player" + players[i].id + ", area = " + players[i].areaColored);
 
 		}
 		if (wID == 0) {
@@ -166,21 +167,11 @@ public class GameManager : MonoBehaviour {
 		} else {
 			secondID = 0;
 		}
-			
-		
-		Debug.Log ("Winner: Player" + GameManager.instance.winnerID + ", area = " + maxArea);
+				
+//		Debug.Log ("Winner: Player" + GameManager.instance.winnerID + ", area = " + maxArea);
 		return wID;
 	}
 
-//	public float normalizeArea(float a){
-//		float aMin = 0.0f;
-//		float aMax = 60 * 60;
-//
-//		float normalized = (a - aMin) / (aMax - aMin);
-//
-//		return normalized;
-//
-//	}
 
 	public void SetMaterial(int playerID, int color){
 		Debug.Log ("setting material for player" + playerID + "to: " + color);
