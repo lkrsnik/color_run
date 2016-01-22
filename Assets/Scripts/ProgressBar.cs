@@ -17,10 +17,10 @@ public class ProgressBar : MonoBehaviour {
 
 //		float area = 0.4f;
 		float area = GameManager.instance.players[ID].areaColored;
-//		float nArea = GameManager.instance.normalizeArea (area);
+		float nArea = area*2;
 		Image image = GetComponent<Image> ();
 		image.color = GameManager.instance.players[ID].color;
-		image.fillAmount = area;
+		image.fillAmount = nArea;
 
 	}
 }

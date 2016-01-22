@@ -160,6 +160,7 @@ public class MenuManager : MonoBehaviour
 		ShowMenu (finishMenu);
 		Debug.Log ("Finished Game");
 		Debug.Log ("Winner: Player" + GameManager.instance.winnerID);
+		Time.timeScale = 0;
 	}
 
 
