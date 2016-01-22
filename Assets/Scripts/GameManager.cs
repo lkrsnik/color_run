@@ -84,13 +84,9 @@ public class GameManager : MonoBehaviour {
 			SetMaterial(i, players[i].colorID);
 		}
 
-
-		// TODO: clear all colored area
-//		GameObject terrain = GameObject.FindGameObjectWithTag ("Terrain");
-//		Debug.Log ("Terrain: " + terrain.ToString());
+		//reset ground coloring
 		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
 		gameLogicScript.restartTextures ();
-		//terrain.initializeTerrainTexture();
 
 	}
 
