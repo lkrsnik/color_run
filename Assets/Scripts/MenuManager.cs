@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour
 	public Menu mainMenu;
 	public Menu pauseMenu;
 	public Menu hudMenu;
+	public Menu finishMenu;
 
 	public Camera mainCamera;
 	public Camera menuCamera;
@@ -95,11 +96,13 @@ public class MenuManager : MonoBehaviour
 	public void GetInput0(string playerName0){
 		Debug.Log ("Name player 0: " + playerName0);
 		GameManager.instance.players[0].pName = playerName0;
+		GameManager.instance.players[0].id = 0;
 	}
 
 	public void GetInput1(string playerName1){
 		Debug.Log ("Name player 1: " + playerName1);
 		GameManager.instance.players[1].pName = playerName1;
+		GameManager.instance.players[1].id = 1;
 	}
 
 	public void ColorSelectedGreen(int playerID){
@@ -151,6 +154,12 @@ public class MenuManager : MonoBehaviour
 	public void RestartLevel(){
 		//Application.LoadLevel (0);
 		GameManager.instance.ResetLevel ();
+	}
+
+	public void FinishedGame(){
+		ShowMenu (finishMenu);
+		Debug.Log ("Finished Game");
+		Debug.Log ("Winner: Player" + GameManager.instance.winnerID);
 	}
 
 

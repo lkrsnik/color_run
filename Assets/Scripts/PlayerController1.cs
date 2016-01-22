@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerController1 : MonoBehaviour {
 
-	public float speed; //efault: 10
+	public float speed; //default: 10
 	private Rigidbody rb;
 	public float angle;
 	public int player;

@@ -5,10 +5,11 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 
-	//public GameLogic gl;
 	public GameLogic gameLogicScript;
+	public MenuManager menuScript;
 
-	public float startTime = 2*60;
+//	public float startTime = 2*60;
+	public float startTime = 10;
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
@@ -38,6 +39,11 @@ public class GameManager : MonoBehaviour {
 	public pData[] players = new pData[4];
 	//number of players
 	public int nP;
+
+	public int winnerID;
+	public int secondID;
+
+	bool gameFinished;
 
 	// Creates an instance of Gamemanager as a gameobject if an instance does not exist
 	public static GameManager Instance
@@ -70,7 +76,7 @@ public class GameManager : MonoBehaviour {
 		Debug.Log ("Reset Level");
 		timerInSeconds = startTime;
 		Time.timeScale = 1;
-
+		gameFinished = false;
 
 		for (int i = 0; i < nP; i++) {
 			//reset area
@@ -110,6 +116,10 @@ public class GameManager : MonoBehaviour {
 		players[0].initialPos = GetPosition (0);
 		//pause Game
 		Time.timeScale = 0;
+		gameFinished = false;
+
+		//find Menu script
+		menuScript = GameObject.FindObjectOfType(typeof(MenuManager)) as MenuManager;
 
 	}
 
@@ -120,12 +130,37 @@ public class GameManager : MonoBehaviour {
 		timerInSeconds -= Time.deltaTime;
 		minutes = (int)(timerInSeconds / 60f);
 		secondsInMinute = (int)(timerInSeconds % 60f);
+
+		if (timerInSeconds <= 0 && !gameFinished) {
+			winnerID = SelectWinner ();
+			menuScript.FinishedGame ();
+			gameFinished = true;
+			Debug.Log ("Finish");
+		}
 	}
 
 	Vector3 GetPosition(int playerID){
 		GameObject p = GameObject.FindGameObjectWithTag ("Player" + playerID);
 		Debug.Log ("Position: " + p.transform.position);
 		return p.transform.position;
+	}
+
+	int SelectWinner(){
+		float maxArea = 0.0f;
+		int wID = 0;
+		foreach (pData player in players) {
+			if (player.areaColored > maxArea) {
+				maxArea = player.areaColored;
+				wID = player.id;
+			}
+		}
+		if (wID == 0)
+			secondID = 1;
+		else
+			secondID = 0;
+		
+		Debug.Log ("Winner: Player" + winnerID + ", area = " + maxArea);
+		return wID;
 	}
 
 	public float normalizeArea(float a){

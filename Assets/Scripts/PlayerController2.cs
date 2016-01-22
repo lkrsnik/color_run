@@ -3,10 +3,10 @@ using System.Collections;
 
 public class PlayerController2 : MonoBehaviour {
 	
-	public float force;
+	public float force; //defaul: 15
 	private Rigidbody rb;
 	public int player;
-	public int maxVelocity;
+	public int maxVelocity; //default: 15
 
 	public float angle;
 
