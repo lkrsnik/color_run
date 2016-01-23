@@ -15,6 +15,7 @@ public class MenuManager : MonoBehaviour
 	public Camera menuCamera;
 
 	private bool onPause;
+	private bool muted;
 
 
 	void Start ()
@@ -28,6 +29,8 @@ public class MenuManager : MonoBehaviour
 
 		//setting up GameManager
 		DontDestroyOnLoad(GameManager.Instance);
+
+		muted = false;
 
 
 //		if (!set) {
@@ -174,6 +177,22 @@ public class MenuManager : MonoBehaviour
 	public void Level2(){
 		Debug.Log ("Mode2 Selected");
 		GameManager.instance.SetControllerMode (1);
+	}
+
+	public void GetAudioVolume(float volume){
+		GameManager.instance.audioVolume = volume;
+	}
+
+	public void MuteUnmuteAudio(){
+		if (muted == true) {
+			//unmute
+			GameManager.instance.audioVolume = 1.0f;
+			muted = false;
+		} else if (muted == false) {
+			//mute
+			GameManager.instance.audioVolume = 0.0f;
+			muted = true;
+		}
 	}
 
 

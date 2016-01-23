@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour {
 
 	public bool gameFinished;
 
+	public float audioVolume;
+
 	// Creates an instance of Gamemanager as a gameobject if an instance does not exist
 	public static GameManager Instance
 	{
@@ -126,6 +128,8 @@ public class GameManager : MonoBehaviour {
 		menuScript = GameObject.FindObjectOfType(typeof(MenuManager)) as MenuManager;
 		//find logic script
 		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
+
+		audioVolume = 1.0f;
 
 	}
 
