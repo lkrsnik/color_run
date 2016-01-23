@@ -18,6 +18,6 @@ public class WinnerText : MonoBehaviour {
 		winnerId = GameManager.instance.winnerID;
 		secondID = GameManager.instance.secondID;
 //		Debug.Log ("WinnerTextID: " + winnerId);
-		winnerText.text = "Winner: \n" + GameManager.instance.players[winnerId].pName + " (Player" + winnerId + "), Area colored: " + ((int)(GameManager.instance.players[winnerId].areaColored*100)).ToString() + "%.\n 2nd: \n"  + GameManager.instance.players[secondID].pName + " (Player" + secondID + "), Area colored: " + ((int)(GameManager.instance.players[secondID].areaColored*100)).ToString() + "%.";
+		winnerText.text = "Winner and King of Rainbow World: \n" + GameManager.instance.players[winnerId].pName + " (Player" + winnerId + "), Area colored: " + ((int)(GameManager.instance.players[winnerId].areaColored*100)).ToString() + "%.\n 2nd: \n"  + GameManager.instance.players[secondID].pName + " (Player" + secondID + "), Area colored: " + ((int)(GameManager.instance.players[secondID].areaColored*100)).ToString() + "%.";
 	}
 }
