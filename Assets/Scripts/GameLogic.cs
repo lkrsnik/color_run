@@ -75,7 +75,7 @@ public class TreeSet
 		//print (this.findMinAncestor().coordinates[0] + " || " + this.findMinAncestor().coordinates[1]);
 		return array;
 	}
-	private void printArray(int[,] arr){
+	public void printArray(int[,] arr){
 		string etext = "";
 		for (int i = 0; i < arr.GetLength(0); i++) {
 			etext += arr[i,0] + " : " + arr [i,1] + " || ";
@@ -250,10 +250,14 @@ public class GameLogic : MonoBehaviour {
 			int[] posCoor = { 0, 0 };
 			activePath [k] = new TreeSet (posCoor, null, Time.time);
 			player.GetComponent<TrailRenderer> ().Clear ();
+			pos [k, 0] = -1;
+			pos [k, 1] = -1;
 			k++;
 		}
 
+
 		applyCoordinates ();
+		print (activePath [0].print (""));
 	}
 
 	//	public void SetPercentage(double perc){
@@ -279,16 +283,18 @@ public class GameLogic : MonoBehaviour {
 			//			print (pos[k,0] + "==" + nPos[0]);
 			//			print (pos[k,1] + "==" + nPos[1]);
 			if(pos[k,0] != nPos[0] || pos[k,1] != nPos[1]){
+				
 				// deletes too old nodes
 				activePath[k].deleteOld(tailTime);
 				int[] posCoor = {pos[k,0], pos[k,1]};
 				// checks if tail intersects
 				bool contains = activePath[k].contains(posCoor);
+				print ("Added position " + nPos[0] + " - " + nPos[1]);
+				print (activePath [k].print (""));
 				// adds the latest element to our path
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
 					TreeSet borderTree = activePath[k].getBorder();
-
 					//int[] posCoor = {0, 0};
 					// erases tail
 					activePath[k] = new TreeSet(posCoor, null, Time.time);
