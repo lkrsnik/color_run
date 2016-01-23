@@ -133,9 +133,11 @@ public class MenuManager : MonoBehaviour
 		//no material set -> default P0 -> blue, P1 -> red
 		if (GameManager.instance.players [0].colorID == 0) {
 			GameManager.instance.players [0].colorID = 3;
+			GameManager.instance.players [0].color = Color.blue;
 		}
 		if (GameManager.instance.players [1].colorID == 0) {
 			GameManager.instance.players [1].colorID = 5;
+			GameManager.instance.players [1].color = Color.red;
 		}
 
 		Debug.Log ("Started the game");

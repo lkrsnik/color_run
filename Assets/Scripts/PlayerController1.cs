@@ -6,10 +6,10 @@ public class PlayerController1 : MonoBehaviour {
 	private Rigidbody rb;
 	public float angle;
 	public int player;
-	public int speed = 10;  //default: 10-15
+	public float speed = 10;  //default: 10-15
 
-	public int speedUpDuration = 7;
-	public int speedUp = 5;
+	public float speedUpDuration = 7;
+	public float speedUp = 5;
 
 
 	void Start()
@@ -51,6 +51,8 @@ public class PlayerController1 : MonoBehaviour {
 		if (other.gameObject.CompareTag ("PickupSpeed")) {
 			other.gameObject.SetActive (false);
 			Debug.Log ("Picked up Speed");
+			GameManager.instance.players [player].timeSpeedPU = speedUpDuration;
+
 			StartCoroutine(SpeedUpBall());
 		}
 

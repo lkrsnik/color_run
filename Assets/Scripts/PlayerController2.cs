@@ -6,12 +6,12 @@ public class PlayerController2 : MonoBehaviour {
 	public float force = 15; //defaul: 15
 	private Rigidbody rb;
 	public int player;
-	public int maxVelocity = 15; //default: 15
+	public float maxVelocity = 15; //default: 15
 	public float angle;
 
-	public int forceUpDuration = 7;
-	public int forceUp = 10;
-	public int maxVelocityInc = 5;
+	public float forceUpDuration = 7;
+	public float forceUp = 10;
+	public float maxVelocityInc = 5;
 
 	
 	void Start()

@@ -32,7 +32,8 @@ public class GameManager : MonoBehaviour {
 		public string pName;
 		public float areaColored;
 		public Vector3 initialPos;
-		public int currentSpeed;
+		public float timeSpeedPU;
+		public float timeOtherPU;
 
 	};
 
@@ -93,6 +94,9 @@ public class GameManager : MonoBehaviour {
 			p.transform.position = players [i].initialPos;
 			//set material
 			SetMaterial(i, players[i].colorID);
+
+			players [i].timeSpeedPU = 0;
+			players [i].timeOtherPU = 0;
 		}
 
 		//reset ground coloring
@@ -133,12 +137,13 @@ public class GameManager : MonoBehaviour {
 		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
 
 		audioVolume = 1.0f;
-		//15
-//		defaultSpeed = 15;
-//
-//		for (int i = 0; i < nP; i++) {
-//			GameManager.instance.players [i].currentSpeed = defaultSpeed;
-//		}
+
+		for (int i = 0; i < nP; i++) {
+			players [i].timeOtherPU = 0;
+			players [i].timeSpeedPU = 0;
+		}
+
+
 
 	}
 
@@ -150,6 +155,19 @@ public class GameManager : MonoBehaviour {
 		minutes = (int)(timerInSeconds / 60f);
 		secondsInMinute = (int)(timerInSeconds % 60f);
 
+		//decrease pickup duration
+		for (int i = 0; i < nP; i++) {
+			if (players [i].timeSpeedPU > 0) {
+				players [i].timeSpeedPU -= Time.deltaTime;
+			}
+			if (players [i].timeOtherPU > 0) {
+				players [i].timeOtherPU -= Time.deltaTime;
+			}
+//			Debug.Log ("PickupDuration: " + GameManager.instance.players [i].timeSpeedPU);
+		}
+
+
+		//finish detection
 		if (timerInSeconds <= 0 && !gameFinished) {
 			winnerID = SelectWinner ();
 			menuScript.FinishedGame ();
