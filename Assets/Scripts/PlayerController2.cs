@@ -3,12 +3,15 @@ using System.Collections;
 
 public class PlayerController2 : MonoBehaviour {
 	
-	public float force; //defaul: 15
+	public float force = 15; //defaul: 15
 	private Rigidbody rb;
 	public int player;
-	public int maxVelocity; //default: 15
-
+	public int maxVelocity = 15; //default: 15
 	public float angle;
+
+	public int forceUpDuration = 7;
+	public int forceUp = 10;
+	public int maxVelocityInc = 5;
 
 	
 	void Start()
@@ -49,5 +52,26 @@ public class PlayerController2 : MonoBehaviour {
 			//0.5f is less smooth, 0.9999f is more smooth
 			rb.velocity *= 0.7f;
 		}
+	}
+
+	void OnTriggerEnter(Collider other){
+
+
+		if (other.gameObject.CompareTag ("PickupSpeed")) {
+			other.gameObject.SetActive (false);
+			Debug.Log ("Picked up Speed");
+			StartCoroutine(SpeedUpBall());
+		}
+
+	}
+
+	IEnumerator SpeedUpBall() {
+		force += forceUp;
+		maxVelocity += maxVelocityInc;
+		Debug.Log ("Force: " + force);
+		yield return new WaitForSeconds(forceUpDuration);
+		force -= forceUp;
+		maxVelocity -= maxVelocityInc;
+		Debug.Log ("Force: " + force);
 	}
 }

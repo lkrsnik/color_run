@@ -2,21 +2,26 @@
 using System.Collections;
 
 public class PlayerController1 : MonoBehaviour {
-
-	public float speed; //default: 10
+ 
 	private Rigidbody rb;
 	public float angle;
 	public int player;
+	public int speed = 10;  //default: 10-15
+
+	public int speedUpDuration = 7;
+	public int speedUp = 5;
 
 
 	void Start()
 	{
 		rb = GetComponent<Rigidbody> ();
 		//rb.velocity=new Vector3 (-1.0f, 0.0f, 0.0f) * speed;
+
 	}
 
 	void FixedUpdate()
 	{
+
 		float moveH;
 		switch (player) {
 			case 0:
@@ -39,4 +44,24 @@ public class PlayerController1 : MonoBehaviour {
 		//rb.AddForce (Quaternion.AngleAxis (moveH*100, Vector3.up)* rb.velocity);
 		//rb.AddForce (movement * speed);
 	}
+
+	void OnTriggerEnter(Collider other){
+
+
+		if (other.gameObject.CompareTag ("PickupSpeed")) {
+			other.gameObject.SetActive (false);
+			Debug.Log ("Picked up Speed");
+			StartCoroutine(SpeedUpBall());
+		}
+
+	}
+
+	IEnumerator SpeedUpBall() {
+		speed += speedUp;
+		Debug.Log ("Speed: " + speed);
+		yield return new WaitForSeconds(speedUpDuration);
+		speed -= speedUp;
+		Debug.Log ("Speed: " + speed);
+	}
+		
 }

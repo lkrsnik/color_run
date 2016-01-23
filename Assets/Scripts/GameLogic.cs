@@ -257,7 +257,7 @@ public class GameLogic : MonoBehaviour {
 
 
 		applyCoordinates ();
-		print (activePath [0].print (""));
+//		print (activePath [0].print (""));
 	}
 
 	//	public void SetPercentage(double perc){
@@ -289,8 +289,8 @@ public class GameLogic : MonoBehaviour {
 				int[] posCoor = {pos[k,0], pos[k,1]};
 				// checks if tail intersects
 				bool contains = activePath[k].contains(posCoor);
-				print ("Added position " + nPos[0] + " - " + nPos[1]);
-				print (activePath [k].print (""));
+//				print ("Added position " + nPos[0] + " - " + nPos[1]);
+//				print (activePath [k].print (""));
 				// adds the latest element to our path
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
@@ -408,7 +408,7 @@ public class GameLogic : MonoBehaviour {
 			}
 			printS += "Color" + i + " = " + leadingColor [i] + " || ";
 		}
-		print(printS);
+//		print(printS);
 		if (biggestArea == 0 || eatArea)
 			finalColor = colorID;
 

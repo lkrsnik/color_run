@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour {
 		public string pName;
 		public float areaColored;
 		public Vector3 initialPos;
+		public int currentSpeed;
 
 	};
 
@@ -44,6 +45,8 @@ public class GameManager : MonoBehaviour {
 	public int secondID;
 
 	public bool gameFinished;
+
+//	public int defaultSpeed;
 
 	public float audioVolume;
 
@@ -85,7 +88,7 @@ public class GameManager : MonoBehaviour {
 			players [i].areaColored = 0.0f;
 			//reset position
 			GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
-			Debug.Log ("Player" + i + ": " + p.ToString());
+//			Debug.Log ("Player" + i + ": " + p.ToString());
 			//p.rigidbody.velocity = Vector3.zero;
 			p.transform.position = players [i].initialPos;
 			//set material
@@ -130,6 +133,12 @@ public class GameManager : MonoBehaviour {
 		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
 
 		audioVolume = 1.0f;
+		//15
+//		defaultSpeed = 15;
+//
+//		for (int i = 0; i < nP; i++) {
+//			GameManager.instance.players [i].currentSpeed = defaultSpeed;
+//		}
 
 	}
 
@@ -151,7 +160,7 @@ public class GameManager : MonoBehaviour {
 
 	Vector3 GetPosition(int playerID){
 		GameObject p = GameObject.FindGameObjectWithTag ("Player" + playerID);
-		Debug.Log ("Position: " + p.transform.position);
+//		Debug.Log ("Position: " + p.transform.position);
 		return p.transform.position;
 	}
 
@@ -178,7 +187,7 @@ public class GameManager : MonoBehaviour {
 
 
 	public void SetMaterial(int playerID, int color){
-		Debug.Log ("setting material for player" + playerID + "to: " + color);
+//		Debug.Log ("setting material for player" + playerID + "to: " + color);
 
 		GameObject p = GameObject.FindGameObjectWithTag ("Player" + playerID);
 		Renderer renderer = p.GetComponent<Renderer> ();
@@ -211,7 +220,7 @@ public class GameManager : MonoBehaviour {
 	public void SetControllerMode(int mode){
 		for (int i = 0; i < nP; i++) {
 			GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
-			Debug.Log ("Player" + i + ": " + p.ToString());
+//			Debug.Log ("Player" + i + ": " + p.ToString());
 			if (mode == 0) {
 				p.GetComponent<PlayerController1> ().enabled = true;
 				p.GetComponent<PlayerController2> ().enabled = false;

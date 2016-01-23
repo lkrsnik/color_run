@@ -130,7 +130,16 @@ public class MenuManager : MonoBehaviour
 
 
 	public void StartGame(){
+		//no material set -> default P0 -> blue, P1 -> red
+		if (GameManager.instance.players [0].colorID == 0) {
+			GameManager.instance.players [0].colorID = 3;
+		}
+		if (GameManager.instance.players [1].colorID == 0) {
+			GameManager.instance.players [1].colorID = 5;
+		}
+
 		Debug.Log ("Started the game");
+		Debug.Log ("Value Color:" + GameManager.instance.players[0].colorID);
 		//Application.LoadLevel (0);
 		//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		GameManager.instance.ResetLevel ();
