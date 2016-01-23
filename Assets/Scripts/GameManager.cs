@@ -204,4 +204,21 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	public void SetControllerMode(int mode){
+		for (int i = 0; i < nP; i++) {
+			GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
+			Debug.Log ("Player" + i + ": " + p.ToString());
+			if (mode == 0) {
+				p.GetComponent<PlayerController1> ().enabled = true;
+				p.GetComponent<PlayerController2> ().enabled = false;
+				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
+			} else if (mode == 1) {
+				p.GetComponent<PlayerController1> ().enabled = false;
+				p.GetComponent<PlayerController2> ().enabled = true;
+				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
+			}
+				
+		}
+	}
+
 }

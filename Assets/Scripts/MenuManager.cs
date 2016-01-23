@@ -168,10 +168,12 @@ public class MenuManager : MonoBehaviour
 
 	public void Level1(){
 		Debug.Log ("Mode1 Selected");
+		GameManager.instance.SetControllerMode (0);
 	}
 
 	public void Level2(){
 		Debug.Log ("Mode2 Selected");
+		GameManager.instance.SetControllerMode (1);
 	}
 
 
