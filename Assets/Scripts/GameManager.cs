@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour {
 	public GameLogic gameLogicScript;
 	public MenuManager menuScript;
 
-//	public float startTime = 2*60;
-	public float startTime = 10;
+	public float startTime = 2*60;
+//	public float startTime = 10;
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
