@@ -3,6 +3,9 @@ using System.Collections;
 
 //USED DATASTRUCTURES
 //TREE SET
+using System.Collections.Generic;
+
+
 public class TreeSet
 {
 	public int[] coordinates;
@@ -151,8 +154,11 @@ public class GameLogic : MonoBehaviour {
 	public GameObject fieldStart ;
 	public GameObject fieldEnd ;
 	public GameObject [] players ;
+	public float treeDensity;
 	public bool eatArea = true;
 	float tailTime;
+	List <TreeInstance> treeList;
+	float wtfNumber = 5.5f;
 
 	static int maxPlayers = 4;
 
@@ -186,6 +192,10 @@ public class GameLogic : MonoBehaviour {
 
 		// INITIALIZE TERRAIN
 		initializeTerrainTexture ();
+
+		// INITIALIZE TREES
+		treeList = new List <TreeInstance> ();
+		Terrain.activeTerrain.terrainData.treeInstances = treeList.ToArray();
 
 		// SET PREVIOUS POSITION
 		int k = 0;
@@ -247,17 +257,22 @@ public class GameLogic : MonoBehaviour {
 		// erases tail
 		int k = 0;
 		foreach (GameObject player in players) {
-			int[] posCoor = { 0, 0 };
+			int[] posCoor = { 1000, 1000 };
 			activePath [k] = new TreeSet (posCoor, null, Time.time);
 			player.GetComponent<TrailRenderer> ().Clear ();
-			pos [k, 0] = -1;
-			pos [k, 1] = -1;
+			pos [k, 0] = -1000;
+			pos [k, 1] = -1000;
 			k++;
 		}
 
+		// erases trees
+		List <TreeInstance> emptyForest = new List <TreeInstance> ();
+		Terrain.activeTerrain.terrainData.treeInstances = emptyForest.ToArray();
+		treeList = emptyForest;
+
 
 		applyCoordinates ();
-//		print (activePath [0].print (""));
+		//print (activePath [0].print (""));
 	}
 
 	//	public void SetPercentage(double perc){
@@ -289,8 +304,8 @@ public class GameLogic : MonoBehaviour {
 				int[] posCoor = {pos[k,0], pos[k,1]};
 				// checks if tail intersects
 				bool contains = activePath[k].contains(posCoor);
-//				print ("Added position " + nPos[0] + " - " + nPos[1]);
-//				print (activePath [k].print (""));
+				//print ("Added position " + nPos[0] + " - " + nPos[1]);
+				//print (activePath [k].print (""));
 				// adds the latest element to our path
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
@@ -406,9 +421,9 @@ public class GameLogic : MonoBehaviour {
 				biggestArea = leadingColor [i];
 				finalColor = i + 2;
 			}
-			printS += "Color" + i + " = " + leadingColor [i] + " || ";
+			//printS += "Color" + i + " = " + leadingColor [i] + " || ";
 		}
-//		print(printS);
+		//print(printS);
 		if (biggestArea == 0 || eatArea)
 			finalColor = colorID;
 
@@ -417,7 +432,84 @@ public class GameLogic : MonoBehaviour {
 		for (int i = 0; i < changedCoord.GetLength (0); i++) {
 			coordinates [changedCoord [i, 0], changedCoord [i, 1]] = finalColor;
 		}
+		removeForest(changedCoord);
+		addForest (changedCoord, finalColor);
 	}
+
+	void removeForest (int [,] viableCoord) {
+		
+
+		// find trees that are in circle
+		List <TreeInstance> repeatedTreeList = new List <TreeInstance> ();
+		for (int i = 0; i < viableCoord.GetLength (0); i++) {
+			int treeID = insideTree (viableCoord [i, 0], viableCoord [i, 1]);
+			if (treeID != -1)
+				repeatedTreeList.Add (treeList [treeID]);
+		}
+
+		// erase trees that arein circle
+		List <TreeInstance> newTreeList = new List <TreeInstance> ();
+		for (int i = 0; i < treeList.Count; i++) {
+			bool isRepeated = false;
+			for (int j = 0; j < repeatedTreeList.Count; j++) {
+				if (treeList [i].Equals(repeatedTreeList [j]))
+					isRepeated = true;
+			}
+			if (!isRepeated) {
+				newTreeList.Add (treeList [i]);
+			}
+		}
+
+		Terrain.activeTerrain.terrainData.treeInstances = newTreeList.ToArray();
+		treeList = newTreeList;
+	}
+
+	int insideTree(int x, int z) {
+		for (int j = 0; j < treeList.Count; j++) {
+			//print ("CALCNUM1 " + (float)z + " CURRENT NUM1: " + Mathf.Round((treeList [j].position.x * 500) - (float)fieldStartPosZ + wtfNumber));
+			//print ("CALCNUM2 " + (float)x + " CURRENT NUM2: " + Mathf.Round((treeList [j].position.z * 500) - (float)fieldStartPosX + wtfNumber));
+			//break;
+			if ((float)z == Mathf.Round((treeList [j].position.x * 500) - (float)fieldStartPosZ + wtfNumber) && (float)x == Mathf.Round((treeList [j].position.z * 500) - (float)fieldStartPosX + wtfNumber)) {
+				//print ("HERE!!!!");
+				return j;
+			}
+		}
+		return -1;
+	}
+
+	void addForest (int [,] viableCoord, int color) {
+		for (int i = 0; i < viableCoord.GetLength (0); i++) {
+			if (viableCoord [i, 0] % 3 == 0 && viableCoord [i, 1] % 3 == 0 && Random.value < treeDensity)
+				addTree (viableCoord [i, 0], viableCoord [i, 1], color);
+		}
+		//addTree (viableCoord [0, 0], viableCoord [0, 1], color);
+		Terrain.activeTerrain.terrainData.treeInstances = treeList.ToArray();
+	}
+
+	void addTree (int x, int z, int color){
+		Terrain terrain = Terrain.activeTerrain;
+
+		// 1 - Create Tree from Prototype Tree 0
+		TreeInstance newtree = new TreeInstance();
+		newtree.prototypeIndex = color - 2; // From terrain tree prototypes list index
+		newtree.color = new Color (1, 1, 1);
+		newtree.lightmapColor = new Color (1, 1, 1); 
+		newtree.heightScale = 0.30f;
+		newtree.widthScale = 0.30f;
+
+
+		// 2 - Displace tree position randomly and height adjustment
+		// calculate  relative x and z
+		newtree.position = new Vector3(((float)fieldStartPosZ + (float)z - wtfNumber)/500f,0,((float)fieldStartPosX + (float)x - wtfNumber)/500f);
+		//newtree.position.x = ((float)fieldStartPosZ + (float)z) / 500f;
+		//newtree.position.z = ((float)fieldStartPosX + (float)x) / 500f;
+		newtree.position.y = terrain.terrainData.GetInterpolatedHeight(newtree.position.x, newtree.position.z)/600f;  // Dont sure if I have to normalize coords 
+
+		print ("COORDINATES: " + z + " || " + x);
+		//print ("POSITION2: " + newtree.position.y);
+		treeList.Add(newtree);
+	}
+
 	bool coordEq (int [,] coord1, int pos1, int [,] coord2, int pos2) {
 		return coord1 [pos1, 0] == coord2 [pos2, 0] && coord1 [pos1, 1] == coord2 [pos2, 1];
 	}
