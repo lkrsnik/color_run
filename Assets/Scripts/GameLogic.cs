@@ -159,6 +159,7 @@ public class GameLogic : MonoBehaviour {
 	float tailTime;
 	List <TreeInstance> treeList;
 	float wtfNumber = 5.5f;
+	bool pickUpAble = false;
 
 	static int maxPlayers = 4;
 
@@ -290,6 +291,7 @@ public class GameLogic : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		addPickups ();
 		// SET POSITION
 		int k = 0;
 		foreach (GameObject player in players){
@@ -344,6 +346,17 @@ public class GameLogic : MonoBehaviour {
 		//applyPercantage ();
 		applyCoordinates ();
 
+	}
+
+	void addPickups () {
+		if ((int)Time.time % 5 != 0) {
+			pickUpAble = true;
+		} else if (pickUpAble) {
+			pickUpAble = false;
+			print ("TIME!!!");
+
+		}
+			
 	}
 
 	void setCoordinates (TreeSet borderTree, int colorID)
