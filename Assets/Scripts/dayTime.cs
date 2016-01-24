@@ -19,7 +19,8 @@ public class dayTime : MonoBehaviour {
 	// initialRot = -30,0,0
 	// Update is called once per frame
 	void Update () {
-		transform.Rotate(Vector3.right * Time.deltaTime*1.6f, Space.Self);
+		if (GameManager.instance.dayNightEnabled)
+			transform.Rotate(Vector3.right * Time.deltaTime*1.6f, Space.Self) ;
 	}
 
 	public void ResetAngle(Vector3 init){

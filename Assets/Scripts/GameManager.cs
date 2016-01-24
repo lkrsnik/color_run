@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour {
 	public float audioVolume;
 
 	public Vector3 lightStartRotation;
+	public bool dayNightEnabled;
 
 	// Creates an instance of Gamemanager as a gameobject if an instance does not exist
 	public static GameManager Instance
@@ -113,6 +114,9 @@ public class GameManager : MonoBehaviour {
 		gameLogicScript.restartTextures ();
 
 		dayTimeScript.ResetAngle(lightStartRotation);
+		if (!dayNightEnabled) {
+			dayTimeScript.ResetAngle(new Vector3 (90, 0, 0));
+		}
 
 	}
 
@@ -160,7 +164,7 @@ public class GameManager : MonoBehaviour {
 			players [i].eatArea = false;
 		}
 
-
+		dayNightEnabled = true;
 
 	}
 

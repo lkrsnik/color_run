@@ -206,5 +206,13 @@ public class MenuManager : MonoBehaviour
 		}
 	}
 
+	public void SwitchNightEnabled(){
+		if (GameManager.instance.dayNightEnabled == true) {
+			GameManager.instance.dayNightEnabled = false;
+		} else if (GameManager.instance.dayNightEnabled == false) {
+			GameManager.instance.dayNightEnabled = true;
+		}
+	}
+
 
 }
