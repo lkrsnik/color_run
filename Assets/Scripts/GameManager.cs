@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
 
 	public GameLogic gameLogicScript;
 	public MenuManager menuScript;
+	public dayTime dayTimeScript;
 
 	public float startTime = 2*60;
 //	public float startTime = 10;
@@ -51,6 +52,8 @@ public class GameManager : MonoBehaviour {
 //	public int defaultSpeed;
 
 	public float audioVolume;
+
+	public Vector3 lightStartRotation;
 
 	// Creates an instance of Gamemanager as a gameobject if an instance does not exist
 	public static GameManager Instance
@@ -108,6 +111,8 @@ public class GameManager : MonoBehaviour {
 		//reset ground coloring
 		gameLogicScript.restartTextures ();
 
+		dayTimeScript.ResetAngle(lightStartRotation);
+
 	}
 
 	// Use this for initialization
@@ -137,10 +142,14 @@ public class GameManager : MonoBehaviour {
 		GameManager.instance.players[0].id = 0;
 		GameManager.instance.players[1].id = 1;
 
+		lightStartRotation = new Vector3 (-10, 0, 0);
+
 		//find Menu script
 		menuScript = GameObject.FindObjectOfType(typeof(MenuManager)) as MenuManager;
 		//find logic script
 		gameLogicScript = GameObject.FindObjectOfType(typeof(GameLogic)) as GameLogic;
+		//find daytime script
+		dayTimeScript = GameObject.FindObjectOfType(typeof(dayTime)) as dayTime;
 
 		audioVolume = 1.0f;
 
@@ -217,23 +226,28 @@ public class GameManager : MonoBehaviour {
 		GameObject p = GameObject.FindGameObjectWithTag ("Player" + playerID);
 		Renderer renderer = p.GetComponent<Renderer> ();
 		TrailRenderer trenderer = p.GetComponent<TrailRenderer> ();
+		Light pLight = p.GetComponent<Light> ();
 
 		switch (color) {
 		case 2:
 			renderer.material = greenMat;
 			trenderer.material = greenTrailMat;
+			pLight.color = Color.green;
 			break;
 		case 3:
 			renderer.material = blueMat;
 			trenderer.material = blueTrailMat;
+			pLight.color = Color.blue;
 			break;
 		case 4:
 			renderer.material = yellowMat;
 			trenderer.material = yellowTrailMat;
+			pLight.color = Color.yellow;
 			break;
 		case 5:
 			renderer.material = redMat;
 			trenderer.material = redTrailMat;
+			pLight.color = Color.red;
 			break;
 		default:
 			Debug.Log ("wrong material!");
