@@ -25,14 +25,15 @@ public class TreeSet
 			return false;
 		return son.contains (coor);
 	}
+
 	public string print(string text){
 		text += coordinates [0] + " : " + coordinates [1] + " - " + timeorcolor + " || ";
 		if (son == null)
 			return text;
 		else
 			return son.print (text);
-
 	}
+
 	public TreeSet getBorder(TreeSet ancestor = null, TreeSet finnish = null){
 		TreeSet border = new TreeSet (coordinates, ancestor, 0);
 		if (finnish != null && coordinates [0] == finnish.coordinates [0] && coordinates [1] == finnish.coordinates [1]) {
@@ -42,13 +43,14 @@ public class TreeSet
 				return son.getBorder (border, border);
 			else
 				return son.getBorder (border, finnish);
-
 	}
+
 	public int length(){
 		if (son == null)
 			return 1;
 		return son.length() + 1;
 	}
+
 	public int[,] toArray(){
 		int length = this.length ();
 		int [,] array = new int [length, 2];
@@ -58,26 +60,22 @@ public class TreeSet
 			array[i,1] = curr.coordinates[1];
 			curr = curr.next();
 		}
-		//printArray (array);
 		return array;
 	}
+
 	public int[,] toOrderedArray(bool horiz){
-		//Debug.Log ("HEREEEEEE1!!!");
 		int length = this.length ();
 		int [,] array = new int [length, 2];
 		TreeSet curr = this.cloneCoord();
-		//		Debug.Log (this.print (""));
-		//		Debug.Log (curr.print (""));
 		for (int i = 0; i < length; i++) {
 			TreeSet minAncestor = curr.findMinAncestor(horiz);
 			array[i,0] = minAncestor.coordinates[0];
 			array[i,1] = minAncestor.coordinates[1];
 			curr = curr.eraseNode(minAncestor);
 		}
-		//printArray (array);
-		//print (this.findMinAncestor().coordinates[0] + " || " + this.findMinAncestor().coordinates[1]);
 		return array;
 	}
+
 	public void printArray(int[,] arr){
 		string etext = "";
 		for (int i = 0; i < arr.GetLength(0); i++) {
@@ -85,6 +83,7 @@ public class TreeSet
 		}
 		Debug.Log (etext);
 	}
+
 	private TreeSet cloneCoord(){
 		TreeSet clone = new TreeSet (new int[]{ this.coordinates[0], this.coordinates[1] }, null, 0);
 		TreeSet curr = this;
@@ -113,8 +112,8 @@ public class TreeSet
 			curr = curr.next();
 		}
 		return this;
-
 	}
+
 	private TreeSet findMinAncestor(bool horiz){
 		TreeSet minNode = new TreeSet (new int[]{ 100, 100 }, null, 0);
 		TreeSet curr = this;
@@ -131,9 +130,7 @@ public class TreeSet
 		}
 		return minNode;
 	}
-	//	private TreeSet eraseNode(TreeSet node){
-	//
-	//	}
+
 	private TreeSet next(){
 		return this.son;
 	}
@@ -149,8 +146,6 @@ public class TreeSet
 }
 
 public class GameLogic : MonoBehaviour {
-
-
 	public GameObject fieldStart ;
 	public GameObject fieldEnd ;
 	public GameObject [] players ;
@@ -172,13 +167,13 @@ public class GameLogic : MonoBehaviour {
 
 	// IF IT IS 60 --> 60*60
 	static int fieldSize = 60;
+
 	// ABSOLUTE FIELD START POSITION
 	static int fieldStartPosX = 225;
 	static int fieldStartPosZ = 225;
 
-	//26.1;
-	static int fieldEndPosX = 285;// = 48.71;
-	static int fieldEndPosZ = 285;// = 123.19;
+	static int fieldEndPosX = 285;
+	static int fieldEndPosZ = 285;
 
 	static float terrainSize = 500f;
 
@@ -186,8 +181,6 @@ public class GameLogic : MonoBehaviour {
 
 	private float[,,] alphaData;
 	private TerrainData tData;
-	//private float percentage;
-
 
 	// Use this for initialization
 	void Start () {
@@ -222,40 +215,22 @@ public class GameLogic : MonoBehaviour {
 			activePath[k] = new TreeSet(posCoor, null, Time.time);
 			k++;
 		}
-
-
-
-		// PRINT POSITIONS
-		//		foreach (GameObject player in players){
-		//			print (getPosition(player)[0] + " || " + getPosition(player)[1]);
-		//		}
 	}
 
 	// SELECTS A FIELD TEXTURE DESERT AND APPLIES IT TO WASTELAND
 	public void initializeTerrainTexture (){
 		tData = Terrain.activeTerrain.terrainData;
-
 		alphaData = tData.GetAlphamaps (0, 0, tData.alphamapWidth, tData.alphamapHeight);
-
 		for (int i = fieldStartPosX; i < fieldEndPosX; i++)
 			for (int j = fieldStartPosZ; j < fieldEndPosZ; j++) {
-
-
 				alphaData [i, j, 0] = 0;
 				alphaData [i, j, 1] = 1;
 				alphaData [i, j, 2] = 0;
 				alphaData [i, j, 3] = 0;
 				alphaData [i, j, 4] = 0;
 				alphaData [i, j, 5] = 0;
-
 			}	
-
 		tData.SetAlphamaps (0, 0, alphaData);
-
-		//		print (tData.alphamapHeight);
-		//		print (tData.alphamapWidth);
-
-
 	}
 
 	public void restartTextures() {
@@ -275,86 +250,58 @@ public class GameLogic : MonoBehaviour {
 			k++;
 		}
 
+
+		var children = new List<GameObject>();
+		foreach (Transform child in pickupParent.transform) children.Add(child.gameObject);
+		children.ForEach(child => Destroy(child));
+
 		// erases trees
 		List <TreeInstance> emptyForest = new List <TreeInstance> ();
 		Terrain.activeTerrain.terrainData.treeInstances = emptyForest.ToArray();
 		treeList = emptyForest;
 
-
 		applyCoordinates ();
-		//print (activePath [0].print (""));
 	}
 
-	//	public void SetPercentage(double perc){
-	//		percentage = (float) perc /100f;
-	//		
-	//		for(int y=0; y<tData.alphamapHeight; y++){
-	//			for(int x = 0; x < tData.alphamapWidth; x++){
-	//				alphaData[x, y, 0] = 1 - percentage;
-	//				alphaData[x, y, 2] = percentage;
-	//			}
-	//		}
-	//		
-	//		tData.SetAlphamaps(0, 0, alphaData);
-	//	}
 	// Update is called once per frame
 	void Update () {
-
 		addPickups ();
+
 		// SET POSITION
 		int k = 0;
 		foreach (GameObject player in players){
 			// NEW POSITION
 			int[] nPos = getPosition(player);
-			//			print (pos[k,0] + "==" + nPos[0]);
-			//			print (pos[k,1] + "==" + nPos[1]);
 			if(pos[k,0] != nPos[0] || pos[k,1] != nPos[1]){
-				
 				// deletes too old nodes
 				activePath[k].deleteOld(tailTime);
 				int[] posCoor = {pos[k,0], pos[k,1]};
+
 				// checks if tail intersects
 				bool contains = activePath[k].contains(posCoor);
-				//print ("Added position " + nPos[0] + " - " + nPos[1]);
-				//print (activePath [k].print (""));
+
 				// adds the latest element to our path
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
 				if (contains){
 					TreeSet borderTree = activePath[k].getBorder();
-					//int[] posCoor = {0, 0};
+
 					// erases tail
 					activePath[k] = new TreeSet(posCoor, null, Time.time);
 					player.GetComponent<TrailRenderer> ().Clear ();
-					//rend.Clear;
-					//print(res.print (""));
-					//print(res.toArray()[0,0] + " : " + res.toArray()[0,1] + " || " + res.toArray()[res.length() - 1,0] + " : " + res.toArray()[res.length() - 1,1]);
-					//print(res.toOrderedArray()[0,0] + " : " + res.toOrderedArray()[0,1] + " || " + res.toOrderedArray()[res.length() - 1,0] + " : " + res.toOrderedArray()[res.length() - 1,1]);
-					//res.toArray();
-					//res.toOrderedArray();
-					//bool horiz = false;
-
 					if (GameManager.instance != null) {
 						if (player.name == "Player0") {
-							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
-							//getMark(res.toOrderedArray (), GameManager.instance.color1)
 							setCoordinates(borderTree, 0);
-							//setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [0].colorID);
 						} else if (player.name == "Player1") {
 							setCoordinates(borderTree, 1);
 						}
 					}
-					//print(res.toOrderedArray()[0,0]);
 				}
 				pos[k,0] = nPos[0];
 				pos[k,1] = nPos[1];
-				//print (activePath[k].print(""));
 			}
-
 			k++;
 		}
-		//applyPercantage ();
 		applyCoordinates ();
-
 	}
 
 	void addPickups () {
@@ -362,7 +309,6 @@ public class GameLogic : MonoBehaviour {
 			pickUpAble = true;
 		} else if (pickUpAble) {
 			pickUpAble = false;
-
 			for (int i = 0; i < pickups.GetLength (0); i++) {
 				if (Random.value < pickupProbability) {
 					float x = (Random.value * 45) - 24;
@@ -373,19 +319,7 @@ public class GameLogic : MonoBehaviour {
 					newPickup.transform.SetParent (pickupParent.transform, false);
 				}
 			}
-
-
-
-			//Vector3 newVec2 = new Vector3 (21, Terrain.activeTerrain.terrainData.GetInterpolatedHeight(0.53f,0.53f), 21);
-			//Quaternion q2 = Quaternion.Euler (new Vector3 (0, 0, 0));
-			//GameObject newPickup2 = (GameObject) Instantiate(pickups[0], newVec2, q2);
-			//newPickup2.transform.SetParent(pickupParent.transform, false);
-			//newPickup.
-			//newPickup.transform = players [0].transform;
-			//print ("TIME!!!");
-
 		}
-			
 	}
 
 	void setCoordinates (TreeSet borderTree, int playerID)
@@ -394,6 +328,7 @@ public class GameLogic : MonoBehaviour {
 		int[,] horizCoord = getCoordinatesOptimized2 (borderTree, true);
 		int[,] vertCoord = getCoordinatesOptimized2 (borderTree, false);
 		int[] leadingColor = new int[4];
+
 		// current position in vertCoord
 		int j = 0;
 		TreeSet checkedCoord = null;
@@ -464,13 +399,9 @@ public class GameLogic : MonoBehaviour {
 				biggestArea = leadingColor [i];
 				finalColor = i + 2;
 			}
-			//printS += "Color" + i + " = " + leadingColor [i] + " || ";
 		}
-		//print(printS);
 		if (biggestArea == 0 || GameManager.instance.players [playerID].eatArea)
 			finalColor = colorID;
-
-
 		int [,] changedCoord = checkedCoord.toOrderedArray (true);
 		for (int i = 0; i < changedCoord.GetLength (0); i++) {
 			coordinates [changedCoord [i, 0], changedCoord [i, 1]] = finalColor;
@@ -480,8 +411,6 @@ public class GameLogic : MonoBehaviour {
 	}
 
 	void removeForest (int [,] viableCoord) {
-		
-
 		// find trees that are in circle
 		List <TreeInstance> repeatedTreeList = new List <TreeInstance> ();
 		for (int i = 0; i < viableCoord.GetLength (0); i++) {
@@ -509,11 +438,7 @@ public class GameLogic : MonoBehaviour {
 
 	int insideTree(int x, int z) {
 		for (int j = 0; j < treeList.Count; j++) {
-			//print ("CALCNUM1 " + (float)z + " CURRENT NUM1: " + Mathf.Round((treeList [j].position.x * 500) - (float)fieldStartPosZ + wtfNumber));
-			//print ("CALCNUM2 " + (float)x + " CURRENT NUM2: " + Mathf.Round((treeList [j].position.z * 500) - (float)fieldStartPosX + wtfNumber));
-			//break;
 			if ((float)z == Mathf.Round((treeList [j].position.x * 500) - (float)fieldStartPosZ + wtfNumber) && (float)x == Mathf.Round((treeList [j].position.z * 500) - (float)fieldStartPosX + wtfNumber)) {
-				//print ("HERE!!!!");
 				return j;
 			}
 		}
@@ -525,7 +450,6 @@ public class GameLogic : MonoBehaviour {
 			if (viableCoord [i, 0] % 3 == 0 && viableCoord [i, 1] % 3 == 0 && Random.value < treeDensity)
 				addTree (viableCoord [i, 0], viableCoord [i, 1], color);
 		}
-		//addTree (viableCoord [0, 0], viableCoord [0, 1], color);
 		Terrain.activeTerrain.terrainData.treeInstances = treeList.ToArray();
 	}
 
@@ -534,7 +458,7 @@ public class GameLogic : MonoBehaviour {
 
 		// 1 - Create Tree from Prototype Tree 0
 		TreeInstance newtree = new TreeInstance();
-		newtree.prototypeIndex = color - 2; // From terrain tree prototypes list index
+		newtree.prototypeIndex = color - 2;
 		newtree.color = new Color (1, 1, 1);
 		newtree.lightmapColor = new Color (1, 1, 1); 
 		newtree.heightScale = 0.30f;
@@ -544,22 +468,13 @@ public class GameLogic : MonoBehaviour {
 		// 2 - Displace tree position randomly and height adjustment
 		// calculate  relative x and z
 		newtree.position = new Vector3(((float)fieldStartPosZ + (float)z - wtfNumber)/500f,0,((float)fieldStartPosX + (float)x - wtfNumber)/500f);
-		//newtree.position.x = ((float)fieldStartPosZ + (float)z) / 500f;
-		//newtree.position.z = ((float)fieldStartPosX + (float)x) / 500f;
-		newtree.position.y = terrain.terrainData.GetInterpolatedHeight(newtree.position.x, newtree.position.z)/600f;  // Dont sure if I have to normalize coords 
-
-		print ("COORDINATES: " + z + " || " + x);
-		//print ("POSITION2: " + newtree.position.y);
+		newtree.position.y = terrain.terrainData.GetInterpolatedHeight(newtree.position.x, newtree.position.z)/600f;
 		treeList.Add(newtree);
 	}
 
 	bool coordEq (int [,] coord1, int pos1, int [,] coord2, int pos2) {
 		return coord1 [pos1, 0] == coord2 [pos2, 0] && coord1 [pos1, 1] == coord2 [pos2, 1];
 	}
-
-	//	void applyPercantage(){
-	//
-	//	}
 
 	void applyCoordinates ()
 	{
@@ -569,8 +484,7 @@ public class GameLogic : MonoBehaviour {
 			for (int j = 0; j < coordinates.GetLength(1); j++) 
 			{
 				if ( coordinates[i,j] != 0)
-				{			
-					//alphaData[fieldStartPosX + i , fieldStartPosZ + j ,1] = 0;
+				{
 					for (int k = 0; k < maxPlayers + 2; k++)
 						alphaData [fieldStartPosX + i, fieldStartPosZ + j, k] = 0;
 					alphaData[fieldStartPosX + i , fieldStartPosZ + j ,coordinates[i,j]] = 1;
@@ -597,78 +511,6 @@ public class GameLogic : MonoBehaviour {
 		tData.SetAlphamaps (0, 0, alphaData);
 	}
 
-	//	void setCoordinates(int[,] border, int mark){
-	//		// THIS IS UGLY!!!
-	//		for (int i = 0; i < fieldSize; i++) {
-	//			bool flag = false;
-	//			for (int j = 0; j < fieldSize; j++) {
-	//				for (int k = 0; k < border.GetLength(0); k++) {
-	//					//print ("HERE!!!");
-	//					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
-	//						int borderPoints = 0;
-	//						int prev = j;
-	//						for (int l = j+1; l < fieldSize; l++) {
-	//							for (int m = k+1; m < border.GetLength(0); m++) {
-	//								if (border [m, 0]+(fieldSize/2) == i && border [m, 1]+(fieldSize/2) == l && prev != l-1) {
-	//									borderPoints++;
-	//									prev=l;
-	//								}
-	//							}
-	//						}
-	//						if (borderPoints % 2 == 0) {
-	//							coordinates [i, j] = mark;
-	//							flag = false;
-	////							print ("HERE");
-	//						} else {
-	//							coordinates [i, j] = mark;
-	//							flag = true;
-	////							print ("NOOO");
-	//						}
-	//					}
-	//				}
-	//				if (flag) {
-	//					coordinates [i, j] = mark;
-	//				}
-	//			}
-	//		}
-	//	}
-	int getMark (TreeSet borderTree, bool horiz, int initMark) {
-		int [,] border = borderTree.toOrderedArray (horiz);
-		int borderLength = border.GetLength (0);
-		//int finalMark = initMark;
-		int[] leadingColor = new int[4];
-		for (int i = 0; i < borderLength; i++) {
-			// variable which tells us if next element of border is in the same column
-			bool endsInSameLine = i + 1 < borderLength && border [i, 0] == border [i + 1, 0];
-			// variable that tells us the last column to color
-			int endCol = border [i, 1];
-			if (endsInSameLine){
-				endCol = border [i + 1, 1];
-			}
-			for (int j = border [i, 1]; j <= endCol; j++) {
-				//LOGIC ------------
-				int color = coordinates [border [i, 0]+(fieldSize/2), j+(fieldSize/2)];
-				// checks if color is not desert or his color
-				if (color > 1 && color != initMark)
-					leadingColor [color - 2]++;
-				//------------------
-			}
-			//if (endsInSameLine)
-			//	i++;
-		}
-		int biggestArea = 0;
-		int finalMark = initMark;
-		for (int i = 0; i < leadingColor.GetLength (0); i++) {
-			if (leadingColor [i] > biggestArea) {
-				biggestArea = leadingColor [i];
-				finalMark = i + 2;
-			}
-		}
-		if (biggestArea == 0)
-			return initMark;
-		else
-			return finalMark;
-	}
 	int[,] getCoordinatesOptimized2 (TreeSet borderTree, bool horizRendering) {
 		int [,] border = borderTree.toOrderedArray (horizRendering);
 
@@ -699,53 +541,14 @@ public class GameLogic : MonoBehaviour {
 				if (horizRendering) {
 					int[] posCoor = { border [i, n1] + (fieldSize / 2), j + (fieldSize / 2) };
 					colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, n1] + (fieldSize / 2), j + (fieldSize / 2)]);
-					//coordinates [border [i, n1] + (fieldSize / 2), j + (fieldSize / 2)] = initMark;
 				} else {
 					int[] posCoor = { j + (fieldSize / 2), border [i, n1] + (fieldSize / 2) };
 					colorArea = new TreeSet (posCoor, colorArea, coordinates [j + (fieldSize / 2), border [i, n1] + (fieldSize / 2)]);
-					//coordinates [j + (fieldSize / 2), border [i, n1] + (fieldSize / 2)] = initMark;
 				}
-				//------------------
 			}
-			//if (endsInSameLine)
-			//	i++;
 		}
 		return colorArea.toOrderedArray(true);
 	}
-	//	void setCoordinatesOptimized(int[,] border, int mark){
-	//		print("i: "+ (border [border.GetLength(0)-1, 0]+(fieldSize/2)));
-	//		for (int i = border [0, 0]+(fieldSize/2); i <= border [border.GetLength(0)-1, 0]+(fieldSize/2); i++) {
-	//			bool flag = false;
-	//			for (int j = 0; j < fieldSize; j++) {
-	//				for (int k = 0; k < border.GetLength(0); k++) {
-	//					if (border [k, 0]+(fieldSize/2) == i && border [k, 1]+(fieldSize/2) == j) {
-	//						print ((border [k, 0]+(fieldSize/2)) + " : " + (border [k, 1]+(fieldSize/2)));
-	//						int borderPoints = 0;
-	//						int prev = border [k, 1]+(fieldSize/2);
-	//						for (int m = k+1; m < border.GetLength(0); m++) {
-	//							if (border [m, 0]+(fieldSize/2) == i && prev != border [m, 1]+(fieldSize/2)-1) {
-	//								borderPoints++;
-	//							}
-	//							prev=border [m, 1]+(fieldSize/2);
-	//						}
-	//						if (borderPoints % 2 == 0) {
-	//							coordinates [i, j] = mark;
-	//							flag = false;
-	//							//							print ("HERE");
-	//						} else {
-	//							coordinates [i, j] = mark;
-	//							flag = true;
-	//							//							print ("NOOO");
-	//						}
-	//					}
-	//				}
-	//				if (flag) {
-	//					coordinates [i, j] = mark;
-	//				}
-	//			}
-	//		}
-	//		
-	//	}
 
 	// RETURNS POSITION ON OUR MAP FROM PLAYER
 	int [] getPosition (GameObject player)
@@ -765,8 +568,6 @@ public class GameLogic : MonoBehaviour {
 		pos1 [0] = (int) Mathf.Round (pos [0]);
 		pos1 [1] = (int) Mathf.Round (pos [1]);
 
-
 		return pos1;
-
 	}
 }
