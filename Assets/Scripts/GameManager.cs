@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour {
 		public Vector3 initialPos;
 		public float timeSpeedPU;
 		public float timeEatPU;
+		public float angleDir;
 
 	};
 
@@ -98,6 +99,10 @@ public class GameManager : MonoBehaviour {
 			//reset pickup times
 			players [i].timeSpeedPU = 0;
 			players [i].timeEatPU = 0;
+
+			//reset angle
+
+			players [i].angleDir = 0;
 		}
 
 		//reset ground coloring

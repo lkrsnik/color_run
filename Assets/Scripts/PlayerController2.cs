@@ -7,7 +7,7 @@ public class PlayerController2 : MonoBehaviour {
 	private Rigidbody rb;
 	public int player;
 	public float maxVelocity = 15; //default: 15
-	public float angle;
+//	public float angle;
 
 	public float forceUpDuration = 7;
 	public float forceUp = 10;
@@ -39,9 +39,9 @@ public class PlayerController2 : MonoBehaviour {
 		}
 
 
-		angle += moveH * 0.04f;
+		GameManager.instance.players [player].angleDir += moveH * 0.04f;
 
-		Vector3 direction = new Vector3 (Mathf.Sin(angle), 0, Mathf.Cos(angle)) ;
+		Vector3 direction = new Vector3 (Mathf.Sin(GameManager.instance.players [player].angleDir), 0, Mathf.Cos(GameManager.instance.players [player].angleDir)) ;
 
 		rb.AddForce (direction * force);
 

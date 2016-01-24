@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerController1 : MonoBehaviour {
  
 	private Rigidbody rb;
-	public float angle;
+//	public float angle;
 	public int player;
 	public float speed = 10;  //default: 10-15
 
@@ -25,11 +25,11 @@ public class PlayerController1 : MonoBehaviour {
 
 		defaultSpeed = speed;
 		fasterSpeed = speed + speedUp;
+//		angle = 0;
 	}
 
 	void FixedUpdate()
 	{
-
 		float moveH;
 		switch (player) {
 			case 0:
@@ -45,9 +45,9 @@ public class PlayerController1 : MonoBehaviour {
 		//float moveV = Input.GetAxis ("Vertical_WS");
 
 		//Vector3 movement = Quaternion.AngleAxis(moveH*30, Vector3.up) * new Vector3 (-1.0f, 0.0f, 0.0f);
-		angle += moveH * 0.05f;
+		GameManager.instance.players [player].angleDir += moveH * 0.05f;
 
-		rb.velocity=new Vector3 (Mathf.Sin(angle), rb.velocity.y/speed, Mathf.Cos(angle)) * speed;
+		rb.velocity=new Vector3 (Mathf.Sin(GameManager.instance.players [player].angleDir), rb.velocity.y/speed, Mathf.Cos(GameManager.instance.players [player].angleDir)) * speed;
 
 		//rb.AddForce (Quaternion.AngleAxis (moveH*100, Vector3.up)* rb.velocity);
 		//rb.AddForce (movement * speed);
@@ -92,10 +92,10 @@ public class PlayerController1 : MonoBehaviour {
 		}
 
 		else if (other.gameObject.CompareTag ("WallLR")){
-			angle = angle * (-1);
+			GameManager.instance.players [player].angleDir = GameManager.instance.players [player].angleDir * (-1);
 			//Debug.Log ("Yahhoooooooo! " + other.gameObject.name);
 		} else if (other.gameObject.CompareTag ("WallTB")){
-			angle = (Mathf.PI) - angle;
+			GameManager.instance.players [player].angleDir = (Mathf.PI) - GameManager.instance.players [player].angleDir;
 			//Debug.Log ("Yahhoooooooo! " + other.gameObject.name);
 		}
 
