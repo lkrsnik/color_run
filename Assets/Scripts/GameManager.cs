@@ -245,15 +245,38 @@ public class GameManager : MonoBehaviour {
 	public void SetControllerMode(int mode){
 		for (int i = 0; i < nP; i++) {
 			GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
+			GameObject[] wallTB = GameObject.FindGameObjectsWithTag ("WallTB");
+			GameObject[] wallLR = GameObject.FindGameObjectsWithTag ("WallLR");
+
 //			Debug.Log ("Player" + i + ": " + p.ToString());
 			if (mode == 0) {
 				p.GetComponent<PlayerController1> ().enabled = true;
 				p.GetComponent<PlayerController2> ().enabled = false;
 				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
+
+				//set wall behaviour
+				for (int j = 0; j < 2; j++) {
+					//active for mode0
+					wallTB [j].GetComponent<MeshCollider> ().convex = true;
+					wallTB [j].GetComponent<MeshCollider> ().isTrigger = true;
+					wallLR [j].GetComponent<MeshCollider> ().convex = true;
+					wallLR [j].GetComponent<MeshCollider> ().isTrigger = true;
+				}
+
+
 			} else if (mode == 1) {
 				p.GetComponent<PlayerController1> ().enabled = false;
 				p.GetComponent<PlayerController2> ().enabled = true;
 				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
+
+				//set wall behaviour
+				for (int j = 0; j < 2; j++) {
+					//active for mode0
+					wallTB [j].GetComponent<MeshCollider> ().convex = false;
+					wallTB [j].GetComponent<MeshCollider> ().isTrigger = false;
+					wallLR [j].GetComponent<MeshCollider> ().convex = false;
+					wallLR [j].GetComponent<MeshCollider> ().isTrigger = false;
+				}
 			}
 				
 		}
