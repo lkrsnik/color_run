@@ -11,12 +11,20 @@ public class PlayerController1 : MonoBehaviour {
 	public float speedUpDuration = 7;
 	public float speedUp = 5;
 
+	public float eatDuration = 10;
+
+	float defaultSpeed;
+	float fasterSpeed;
+
 
 	void Start()
 	{
 		rb = GetComponent<Rigidbody> ();
 		//rb.velocity=new Vector3 (-1.0f, 0.0f, 0.0f) * speed;
 
+
+		defaultSpeed = speed;
+		fasterSpeed = speed + speedUp;
 	}
 
 	void FixedUpdate()
@@ -43,6 +51,26 @@ public class PlayerController1 : MonoBehaviour {
 
 		//rb.AddForce (Quaternion.AngleAxis (moveH*100, Vector3.up)* rb.velocity);
 		//rb.AddForce (movement * speed);
+
+		if (GameManager.instance.players [player].timeEatPU > 0) {
+			Debug.Log ("Eating area active for player " + player);
+			//TODO: activate eating for each player
+
+		} else {
+			Debug.Log ("Eating area inactive for player " + player);
+
+		}
+
+		if (GameManager.instance.players [player].timeSpeedPU > 0) {
+			Debug.Log ("Speed-UP active for player " + player);
+			speed = fasterSpeed;
+			Debug.Log ("Speed: " + speed);
+
+		} else {
+			Debug.Log ("Speed-UP inactive for player " + player);
+			speed = defaultSpeed;
+			Debug.Log ("Speed: " + speed);
+		}
 	}
 
 	void OnTriggerEnter(Collider other){
@@ -51,10 +79,19 @@ public class PlayerController1 : MonoBehaviour {
 		if (other.gameObject.CompareTag ("PickupSpeed")) {
 			other.gameObject.SetActive (false);
 			Debug.Log ("Picked up Speed");
-			GameManager.instance.players [player].timeSpeedPU = speedUpDuration;
+			GameManager.instance.players [player].timeSpeedPU += speedUpDuration;
 
-			StartCoroutine (SpeedUpBall ());
-		} else if (other.gameObject.CompareTag ("WallLR")){
+//			StartCoroutine (SpeedUpBall ());
+		} 
+		else if (other.gameObject.CompareTag ("PickupEat")) {
+			other.gameObject.SetActive (false);
+			Debug.Log ("Picked up Eatpickup");
+			GameManager.instance.players [player].timeEatPU += eatDuration;
+
+			//			StartCoroutine(eatArea());
+		}
+
+		else if (other.gameObject.CompareTag ("WallLR")){
 			angle = angle * (-1);
 			//Debug.Log ("Yahhoooooooo! " + other.gameObject.name);
 		} else if (other.gameObject.CompareTag ("WallTB")){
@@ -64,12 +101,12 @@ public class PlayerController1 : MonoBehaviour {
 
 	}
 
-	IEnumerator SpeedUpBall() {
-		speed += speedUp;
-		Debug.Log ("Speed: " + speed);
-		yield return new WaitForSeconds(speedUpDuration);
-		speed -= speedUp;
-		Debug.Log ("Speed: " + speed);
-	}
+//	IEnumerator SpeedUpBall() {
+//		speed += speedUp;
+//		Debug.Log ("Speed: " + speed);
+//		yield return new WaitForSeconds(speedUpDuration);
+//		speed -= speedUp;
+//		Debug.Log ("Speed: " + speed);
+//	}
 		
 }
