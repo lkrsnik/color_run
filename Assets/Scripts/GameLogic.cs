@@ -154,9 +154,13 @@ public class GameLogic : MonoBehaviour {
 	public GameObject fieldStart ;
 	public GameObject fieldEnd ;
 	public GameObject [] players ;
+	public GameObject[] pickups;
 	public float treeDensity;
 	public bool eatArea = true;
+	public int pickupSpawnTime;
+	public float pickupProbability;
 	float tailTime;
+	GameObject pickupParent;
 	List <TreeInstance> treeList;
 	float wtfNumber = 5.5f;
 	bool pickUpAble = false;
@@ -176,6 +180,8 @@ public class GameLogic : MonoBehaviour {
 	static int fieldEndPosX = 285;// = 48.71;
 	static int fieldEndPosZ = 285;// = 123.19;
 
+	static float terrainSize = 500f;
+
 	int[,] pos;
 
 	private float[,,] alphaData;
@@ -185,6 +191,9 @@ public class GameLogic : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// GET A PLACE TO DROP ON PICKUPS
+		pickupParent = GameObject.Find("Pickups");
+
 		// TIME IN WHICH TAIL VANISHES
 		tailTime = players[0].GetComponent<TrailRenderer>().time;
 
@@ -349,11 +358,31 @@ public class GameLogic : MonoBehaviour {
 	}
 
 	void addPickups () {
-		if ((int)Time.time % 5 != 0) {
+		if ((int)Time.time % pickupSpawnTime != 0) {
 			pickUpAble = true;
 		} else if (pickUpAble) {
 			pickUpAble = false;
-			print ("TIME!!!");
+
+			for (int i = 0; i < pickups.GetLength (0); i++) {
+				if (Random.value < pickupProbability) {
+					float x = (Random.value * 45) - 24;
+					float z = (Random.value * 45) - 24;
+					Vector3 newVec = new Vector3 (x, Terrain.activeTerrain.terrainData.GetInterpolatedHeight ((x + terrainSize / 2) / terrainSize, (z + terrainSize / 2) / terrainSize), z);
+					Quaternion q = Quaternion.Euler (new Vector3 (0, 0, 0));
+					GameObject newPickup = (GameObject)Instantiate (pickups [i], newVec, q);
+					newPickup.transform.SetParent (pickupParent.transform, false);
+				}
+			}
+
+
+
+			//Vector3 newVec2 = new Vector3 (21, Terrain.activeTerrain.terrainData.GetInterpolatedHeight(0.53f,0.53f), 21);
+			//Quaternion q2 = Quaternion.Euler (new Vector3 (0, 0, 0));
+			//GameObject newPickup2 = (GameObject) Instantiate(pickups[0], newVec2, q2);
+			//newPickup2.transform.SetParent(pickupParent.transform, false);
+			//newPickup.
+			//newPickup.transform = players [0].transform;
+			//print ("TIME!!!");
 
 		}
 			
