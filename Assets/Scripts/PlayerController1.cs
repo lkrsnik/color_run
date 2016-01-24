@@ -54,11 +54,10 @@ public class PlayerController1 : MonoBehaviour {
 
 		if (GameManager.instance.players [player].timeEatPU > 0) {
 			Debug.Log ("Eating area active for player " + player);
-			//TODO: activate eating for each player
-
+			GameManager.instance.players [player].eatArea = true;
 		} else {
 			Debug.Log ("Eating area inactive for player " + player);
-
+			GameManager.instance.players [player].eatArea = false;
 		}
 
 		if (GameManager.instance.players [player].timeSpeedPU > 0) {

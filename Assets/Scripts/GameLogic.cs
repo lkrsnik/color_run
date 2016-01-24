@@ -337,10 +337,10 @@ public class GameLogic : MonoBehaviour {
 						if (player.name == "Player0") {
 							//setCoordinatesOptimized (res.toOrderedArray (), GameManager.instance.color1);
 							//getMark(res.toOrderedArray (), GameManager.instance.color1)
-							setCoordinates(borderTree, GameManager.instance.players [0].colorID);
+							setCoordinates(borderTree, 0);
 							//setCoordinatesOptimized2 (borderTree, horiz, GameManager.instance.players [0].colorID);
 						} else if (player.name == "Player1") {
-							setCoordinates(borderTree, GameManager.instance.players [1].colorID);
+							setCoordinates(borderTree, 1);
 						}
 					}
 					//print(res.toOrderedArray()[0,0]);
@@ -388,8 +388,9 @@ public class GameLogic : MonoBehaviour {
 			
 	}
 
-	void setCoordinates (TreeSet borderTree, int colorID)
+	void setCoordinates (TreeSet borderTree, int playerID)
 	{
+		int colorID = GameManager.instance.players [playerID].colorID;
 		int[,] horizCoord = getCoordinatesOptimized2 (borderTree, true);
 		int[,] vertCoord = getCoordinatesOptimized2 (borderTree, false);
 		int[] leadingColor = new int[4];
@@ -466,7 +467,7 @@ public class GameLogic : MonoBehaviour {
 			//printS += "Color" + i + " = " + leadingColor [i] + " || ";
 		}
 		//print(printS);
-		if (biggestArea == 0 || eatArea)
+		if (biggestArea == 0 || GameManager.instance.players [playerID].eatArea)
 			finalColor = colorID;
 
 

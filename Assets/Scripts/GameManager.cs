@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour {
 		public float timeSpeedPU;
 		public float timeEatPU;
 		public float angleDir;
+		public bool eatArea;
 
 	};
 
@@ -117,7 +118,6 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
 		nP = 2;
 		// Assigns a material named "Assets/Resources/blueSmiley" to the object.
 		blueMat = Resources.Load("blueSmiley", typeof(Material)) as Material;
@@ -157,6 +157,7 @@ public class GameManager : MonoBehaviour {
 		for (int i = 0; i < nP; i++) {
 			players [i].timeEatPU = 0;
 			players [i].timeSpeedPU = 0;
+			players [i].eatArea = false;
 		}
 
 
