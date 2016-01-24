@@ -52,6 +52,15 @@ public class PlayerController2 : MonoBehaviour {
 			//0.5f is less smooth, 0.9999f is more smooth
 			rb.velocity *= 0.7f;
 		}
+
+		if (GameManager.instance.players [player].timeEatPU > 0) {
+			Debug.Log ("Eating area active for player " + player);
+			//TODO: activate eating for each player
+
+		} else {
+			Debug.Log ("Eating area inactive for player " + player);
+
+		}
 	}
 
 	void OnTriggerEnter(Collider other){
@@ -74,4 +83,5 @@ public class PlayerController2 : MonoBehaviour {
 		maxVelocity -= maxVelocityInc;
 		Debug.Log ("Force: " + force);
 	}
+		
 }

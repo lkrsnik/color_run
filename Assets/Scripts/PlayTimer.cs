@@ -37,9 +37,9 @@ public class PlayTimer : MonoBehaviour {
 			break;
 		// P0 other powerup
 		case 2:
-			if (GameManager.instance.players [0].timeOtherPU > 0) {
+			if (GameManager.instance.players [0].timeEatPU > 0) {
 				GetComponentInParent<Image> ().enabled = true;
-				counterText.text = "Power-UP: " + GameManager.instance.players [0].timeOtherPU.ToString ("0:00");
+				counterText.text = "Eating: " + GameManager.instance.players [0].timeEatPU.ToString ("0:00");
 			} else {
 				counterText.text = "";
 				GetComponentInParent<Image> ().enabled = false;
@@ -47,9 +47,9 @@ public class PlayTimer : MonoBehaviour {
 			break;
 		// P1 other powerup
 		case 3:
-			if (GameManager.instance.players [1].timeOtherPU > 0) {
+			if (GameManager.instance.players [1].timeEatPU > 0) {
 				GetComponentInParent<Image> ().enabled = true;
-				counterText.text = "Power-UP: " + GameManager.instance.players [1].timeOtherPU.ToString ("0:00");
+				counterText.text = "Eating: " + GameManager.instance.players [1].timeEatPU.ToString ("0:00");
 			} else {
 				counterText.text = "";
 				GetComponentInParent<Image> ().enabled = false;

@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour {
 		public float areaColored;
 		public Vector3 initialPos;
 		public float timeSpeedPU;
-		public float timeOtherPU;
+		public float timeEatPU;
 
 	};
 
@@ -95,8 +95,9 @@ public class GameManager : MonoBehaviour {
 			//set material
 			SetMaterial(i, players[i].colorID);
 
+			//reset pickup times
 			players [i].timeSpeedPU = 0;
-			players [i].timeOtherPU = 0;
+			players [i].timeEatPU = 0;
 		}
 
 		//reset ground coloring
@@ -138,8 +139,9 @@ public class GameManager : MonoBehaviour {
 
 		audioVolume = 1.0f;
 
+		//reset pickup Times
 		for (int i = 0; i < nP; i++) {
-			players [i].timeOtherPU = 0;
+			players [i].timeEatPU = 0;
 			players [i].timeSpeedPU = 0;
 		}
 
@@ -160,8 +162,8 @@ public class GameManager : MonoBehaviour {
 			if (players [i].timeSpeedPU > 0) {
 				players [i].timeSpeedPU -= Time.deltaTime;
 			}
-			if (players [i].timeOtherPU > 0) {
-				players [i].timeOtherPU -= Time.deltaTime;
+			if (players [i].timeEatPU > 0) {
+				players [i].timeEatPU -= Time.deltaTime;
 			}
 //			Debug.Log ("PickupDuration: " + GameManager.instance.players [i].timeSpeedPU);
 		}
