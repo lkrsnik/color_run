@@ -3,13 +3,13 @@ using System.Collections;
 
 public class PlayerController2 : MonoBehaviour {
 	
-	public float force = 15; //defaul: 15
+	public float force = 10; //defaul: 15
 	private Rigidbody rb;
 	public int player;
-	public float maxVelocity = 15; //default: 15
+	public float maxVelocity = 10; //default: 15
 
 	public float forceUpDuration = 7;
-	public float forceUp = 10;
+	public float forceUp = 8;
 	public float maxVelocityInc = 5;
 
 	
@@ -38,7 +38,7 @@ public class PlayerController2 : MonoBehaviour {
 		}
 
 
-		GameManager.instance.players [player].angleDir += moveH * 0.04f;
+		GameManager.instance.players [player].angleDir += moveH * 0.045f;
 
 		Vector3 direction = new Vector3 (Mathf.Sin(GameManager.instance.players [player].angleDir), 0, Mathf.Cos(GameManager.instance.players [player].angleDir)) ;
 
