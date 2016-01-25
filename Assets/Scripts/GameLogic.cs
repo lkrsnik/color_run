@@ -212,7 +212,7 @@ public class GameLogic : MonoBehaviour {
 
 			// INITIAL POSITION MUST BE DIFFERENT FROM REAL, SO THAT WE DONT GET INITIAL POS COLORED
 			int[] posCoor = {0, 0};
-			activePath[k] = new TreeSet(posCoor, null, Time.time);
+			activePath[k] = null;
 			k++;
 		}
 	}
@@ -243,7 +243,7 @@ public class GameLogic : MonoBehaviour {
 		int k = 0;
 		foreach (GameObject player in players) {
 			int[] posCoor = { 1000, 1000 };
-			activePath [k] = new TreeSet (posCoor, null, Time.time);
+			activePath [k] = null;
 			player.GetComponent<TrailRenderer> ().Clear ();
 			pos [k, 0] = -1000;
 			pos [k, 1] = -1000;
@@ -274,19 +274,72 @@ public class GameLogic : MonoBehaviour {
 			int[] nPos = getPosition(player);
 			if(pos[k,0] != nPos[0] || pos[k,1] != nPos[1]){
 				// deletes too old nodes
-				activePath[k].deleteOld(tailTime);
+				if (activePath[k] != null)
+					activePath[k].deleteOld(tailTime);
 				int[] posCoor = {pos[k,0], pos[k,1]};
 
-				// checks if tail intersects
-				bool contains = activePath[k].contains(posCoor);
+
+				//bool contains = activePath[k].contains(posCoor);
 
 				// adds the latest element to our path
+				//activePath[k] = addTreeSet(posCoor, activePath[k], Time.time);//new TreeSet(posCoor, activePath[k], Time.time);
+
+				bool contains = false;
+				TreeSet intersect = null;
+
+
+				if (activePath[k] != null) {
+					// while x or z coordinates are not connected
+					while (activePath[k].coordinates [0] < posCoor [0] - 1 || activePath[k].coordinates [0] > posCoor [0] + 1 ||
+						activePath[k].coordinates [1] < posCoor [1] - 1 || activePath[k].coordinates [1] > posCoor [1] + 1) {
+
+
+						int nx = activePath[k].coordinates [0];
+						int nz = activePath[k].coordinates [1];
+
+						// if x coordinate is not connected
+						if (activePath[k].coordinates [0] < posCoor [0] - 1) {
+							nx = activePath[k].coordinates [0] + 1;
+						} else if (activePath[k].coordinates [0] > posCoor [0] + 1){
+							nx = activePath[k].coordinates [0] - 1;
+						}
+
+						// if y coordinate is not connected
+						if (activePath[k].coordinates [1] < posCoor [1] - 1) {
+							nz = activePath[k].coordinates [1] + 1;
+						} else if (activePath[k].coordinates [1] > posCoor [1] + 1){
+							nz = activePath[k].coordinates [1] - 1;
+						}
+
+						int[] newCoors = { nx, nz };
+
+						// add the missing coordinate
+						activePath[k] = new TreeSet (newCoors, activePath[k], activePath[k].timeorcolor);
+						if (activePath [k].son.contains (activePath [k].coordinates)) {
+							contains = true;
+							intersect = activePath [k];
+							break;
+						}
+					}
+				}
+				// add the new coordinate
 				activePath[k] = new TreeSet(posCoor, activePath[k], Time.time);
+
+
+
+				if (!contains && activePath [k].son != null) {
+					// checks if tail intersects with last element
+					contains = activePath [k].son.contains (activePath [k].coordinates);
+					if (contains)
+						intersect = activePath [k];
+				}
+
 				if (contains){
-					TreeSet borderTree = activePath[k].getBorder();
+					TreeSet borderTree = intersect.getBorder();
 
 					// erases tail
-					activePath[k] = new TreeSet(posCoor, null, Time.time);
+					//activePath[k] = new TreeSet(posCoor, null, Time.time);
+					intersect.son = null;
 					player.GetComponent<TrailRenderer> ().Clear ();
 					if (GameManager.instance != null) {
 						if (player.name == "Player0") {
@@ -302,6 +355,38 @@ public class GameLogic : MonoBehaviour {
 			k++;
 		}
 		applyCoordinates ();
+	}
+
+	TreeSet addTreeSet(int [] coord, TreeSet ancestor, float time) {
+		if (ancestor != null) {
+			// while x or z coordinates are not connected
+			while (ancestor.coordinates [0] < coord [0] - 1 || ancestor.coordinates [0] > coord [0] + 1 ||
+				ancestor.coordinates [1] < coord [1] - 1 || ancestor.coordinates [1] > coord [1] + 1) {
+				int nx = ancestor.coordinates [0];
+				int nz = ancestor.coordinates [1];
+
+				// if x coordinate is not connected
+				if (ancestor.coordinates [0] < coord [0] - 1) {
+					nx = ancestor.coordinates [0] + 1;
+				} else if (ancestor.coordinates [0] > coord [0] + 1){
+					nx = ancestor.coordinates [0] - 1;
+				}
+
+				// if y coordinate is not connected
+				if (ancestor.coordinates [1] < coord [1] - 1) {
+					nz = ancestor.coordinates [1] + 1;
+				} else if (ancestor.coordinates [1] > coord [1] + 1){
+					nz = ancestor.coordinates [1] - 1;
+				}
+
+				int[] newCoors = { nx, nz };
+
+				// add the missing coordinate
+				ancestor = new TreeSet (newCoors, ancestor, ancestor.timeorcolor);
+			}
+		}
+		// add the new coordinate
+		return new TreeSet(coord, ancestor, Time.time);
 	}
 
 	void addPickups () {
