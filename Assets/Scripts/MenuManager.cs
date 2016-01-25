@@ -209,10 +209,21 @@ public class MenuManager : MonoBehaviour
 	public void SwitchNightEnabled(){
 		if (GameManager.instance.dayNightEnabled == true) {
 			GameManager.instance.dayNightEnabled = false;
+			for(int i=0;i<4;i++){
+				GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
+				p.GetComponent<Light> ().enabled = false;
+			}
 		} else if (GameManager.instance.dayNightEnabled == false) {
 			GameManager.instance.dayNightEnabled = true;
+			for(int i=0;i<4;i++){
+				GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
+				p.GetComponent<Light> ().enabled = true;
+			}
 		}
 	}
+
+
+
 
 
 }
