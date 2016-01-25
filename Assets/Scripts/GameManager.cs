@@ -266,6 +266,8 @@ public class GameManager : MonoBehaviour {
 			GameObject p = GameObject.FindGameObjectWithTag ("Player" + i);
 			GameObject[] wallTB = GameObject.FindGameObjectsWithTag ("WallTB");
 			GameObject[] wallLR = GameObject.FindGameObjectsWithTag ("WallLR");
+			GameObject[] obstacles = GameObject.FindGameObjectsWithTag ("obstacleCube");
+			GameObject parentObst = GameObject.FindGameObjectWithTag ("obstacleParent");
 
 //			Debug.Log ("Player" + i + ": " + p.ToString());
 			if (mode == 0) {
@@ -281,6 +283,10 @@ public class GameManager : MonoBehaviour {
 					wallLR [j].GetComponent<MeshCollider> ().convex = true;
 					wallLR [j].GetComponent<MeshCollider> ().isTrigger = true;
 				}
+					
+				foreach (GameObject obj in obstacles) {
+					obj.SetActive (false);
+				}
 
 
 			} else if (mode == 1) {
@@ -288,14 +294,18 @@ public class GameManager : MonoBehaviour {
 				p.GetComponent<PlayerController2> ().enabled = true;
 				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
 
+				parentObst.SetActiveRecursively (true);
+
 				//set wall behaviour
 				for (int j = 0; j < 2; j++) {
 					//active for mode0
-					wallTB [j].GetComponent<MeshCollider> ().convex = false;
+//					wallTB [j].GetComponent<MeshCollider> ().convex = false;
 					wallTB [j].GetComponent<MeshCollider> ().isTrigger = false;
-					wallLR [j].GetComponent<MeshCollider> ().convex = false;
+//					wallLR [j].GetComponent<MeshCollider> ().convex = false;
 					wallLR [j].GetComponent<MeshCollider> ().isTrigger = false;
 				}
+
+
 			}
 				
 		}
