@@ -7,7 +7,6 @@ public class PlayerController2 : MonoBehaviour {
 	private Rigidbody rb;
 	public int player;
 	public float maxVelocity = 15; //default: 15
-//	public float angle;
 
 	public float forceUpDuration = 7;
 	public float forceUp = 10;
@@ -54,11 +53,11 @@ public class PlayerController2 : MonoBehaviour {
 		}
 
 		if (GameManager.instance.players [player].timeEatPU > 0) {
-			Debug.Log ("Eating area active for player " + player);
+//			Debug.Log ("Eating area active for player " + player);
 			GameManager.instance.players [player].eatArea = true;
 
 		} else {
-			Debug.Log ("Eating area inactive for player " + player);
+//			Debug.Log ("Eating area inactive for player " + player);
 			GameManager.instance.players [player].eatArea = false;
 
 		}
@@ -69,7 +68,7 @@ public class PlayerController2 : MonoBehaviour {
 
 		if (other.gameObject.CompareTag ("PickupSpeed")) {
 			other.gameObject.SetActive (false);
-			Debug.Log ("Picked up Speed");
+//			Debug.Log ("Picked up Speed");
 			StartCoroutine(SpeedUpBall());
 		}
 
@@ -78,11 +77,11 @@ public class PlayerController2 : MonoBehaviour {
 	IEnumerator SpeedUpBall() {
 		force += forceUp;
 		maxVelocity += maxVelocityInc;
-		Debug.Log ("Force: " + force);
+//		Debug.Log ("Force: " + force);
 		yield return new WaitForSeconds(forceUpDuration);
 		force -= forceUp;
 		maxVelocity -= maxVelocityInc;
-		Debug.Log ("Force: " + force);
+//		Debug.Log ("Force: " + force);
 	}
 		
 }

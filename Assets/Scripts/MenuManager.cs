@@ -31,12 +31,6 @@ public class MenuManager : MonoBehaviour
 		DontDestroyOnLoad(GameManager.Instance);
 
 		muted = false;
-
-
-//		if (!set) {
-//			//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-//			set = true;
-//		}
 			
 	}
 
@@ -88,7 +82,6 @@ public class MenuManager : MonoBehaviour
 		if (currentMenu != null)
 			currentMenu.IsOpen = false;
 		currentMenu = null;
-//		Application.LoadLevel (level);
 		SceneManager.LoadScene(level);
 
 		// reset level properties 
@@ -141,9 +134,7 @@ public class MenuManager : MonoBehaviour
 		}
 
 		Debug.Log ("Started the game");
-		Debug.Log ("Value Color:" + GameManager.instance.players[0].colorID);
-		//Application.LoadLevel (0);
-		//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+//		Debug.Log ("Value Color:" + GameManager.instance.players[0].colorID);
 		GameManager.instance.ResetLevel ();
 		ShowMenu (hudMenu);
 		Time.timeScale = 1;
@@ -168,7 +159,6 @@ public class MenuManager : MonoBehaviour
 	}
 
 	public void RestartLevel(){
-		//Application.LoadLevel (0);
 		GameManager.instance.ResetLevel ();
 	}
 
@@ -221,9 +211,6 @@ public class MenuManager : MonoBehaviour
 			}
 		}
 	}
-
-
-
 
 
 }

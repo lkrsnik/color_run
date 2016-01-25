@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour {
 	public dayTime dayTimeScript;
 
 	public float startTime = 2*60;
-//	public float startTime = 10;
 	public float timerInSeconds; 
 	public float minutes, secondsInMinute;
 
@@ -49,8 +48,6 @@ public class GameManager : MonoBehaviour {
 	public int secondID;
 
 	public bool gameFinished;
-
-//	public int defaultSpeed;
 
 	public float audioVolume;
 
@@ -106,7 +103,6 @@ public class GameManager : MonoBehaviour {
 			players [i].timeEatPU = 0;
 
 			//reset angle
-
 			players [i].angleDir = 0;
 		}
 
@@ -142,7 +138,6 @@ public class GameManager : MonoBehaviour {
 		gameFinished = false;
 
 		//set player ids
-
 		GameManager.instance.players[0].id = 0;
 		GameManager.instance.players[1].id = 1;
 
@@ -273,7 +268,7 @@ public class GameManager : MonoBehaviour {
 			if (mode == 0) {
 				p.GetComponent<PlayerController1> ().enabled = true;
 				p.GetComponent<PlayerController2> ().enabled = false;
-				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
+//				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
 
 				//set wall behaviour
 				for (int j = 0; j < 2; j++) {
@@ -292,7 +287,7 @@ public class GameManager : MonoBehaviour {
 			} else if (mode == 1) {
 				p.GetComponent<PlayerController1> ().enabled = false;
 				p.GetComponent<PlayerController2> ().enabled = true;
-				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
+//				Debug.Log ("Set mode" + mode + "for: " + p.ToString());
 
 				parentObst.SetActiveRecursively (true);
 

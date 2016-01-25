@@ -16,8 +16,6 @@ public class PlayTimer : MonoBehaviour {
 	}
 
 	void Update(){
-//		minutes = (int)(Time.time / 60f);
-//		seconds = (int)(Time.time % 60f);
 
 		counterText.text = "";
 		switch (type) {

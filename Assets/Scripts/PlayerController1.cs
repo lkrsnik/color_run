@@ -20,12 +20,8 @@ public class PlayerController1 : MonoBehaviour {
 	void Start()
 	{
 		rb = GetComponent<Rigidbody> ();
-		//rb.velocity=new Vector3 (-1.0f, 0.0f, 0.0f) * speed;
-
-
 		defaultSpeed = speed;
 		fasterSpeed = speed + speedUp;
-//		angle = 0;
 	}
 
 	void FixedUpdate()
@@ -53,22 +49,22 @@ public class PlayerController1 : MonoBehaviour {
 		//rb.AddForce (movement * speed);
 
 		if (GameManager.instance.players [player].timeEatPU > 0) {
-			Debug.Log ("Eating area active for player " + player);
+//			Debug.Log ("Eating area active for player " + player);
 			GameManager.instance.players [player].eatArea = true;
 		} else {
-			Debug.Log ("Eating area inactive for player " + player);
+//			Debug.Log ("Eating area inactive for player " + player);
 			GameManager.instance.players [player].eatArea = false;
 		}
 
 		if (GameManager.instance.players [player].timeSpeedPU > 0) {
-			Debug.Log ("Speed-UP active for player " + player);
+//			Debug.Log ("Speed-UP active for player " + player);
 			speed = fasterSpeed;
-			Debug.Log ("Speed: " + speed);
+//			Debug.Log ("Speed: " + speed);
 
 		} else {
-			Debug.Log ("Speed-UP inactive for player " + player);
+//			Debug.Log ("Speed-UP inactive for player " + player);
 			speed = defaultSpeed;
-			Debug.Log ("Speed: " + speed);
+//			Debug.Log ("Speed: " + speed);
 		}
 	}
 
@@ -77,14 +73,14 @@ public class PlayerController1 : MonoBehaviour {
 
 		if (other.gameObject.CompareTag ("PickupSpeed")) {
 			other.gameObject.SetActive (false);
-			Debug.Log ("Picked up Speed");
+//			Debug.Log ("Picked up Speed");
 			GameManager.instance.players [player].timeSpeedPU += speedUpDuration;
 
 //			StartCoroutine (SpeedUpBall ());
 		} 
 		else if (other.gameObject.CompareTag ("PickupEat")) {
 			other.gameObject.SetActive (false);
-			Debug.Log ("Picked up Eatpickup");
+//			Debug.Log ("Picked up Eatpickup");
 			GameManager.instance.players [player].timeEatPU += eatDuration;
 
 			//			StartCoroutine(eatArea());
@@ -99,13 +95,5 @@ public class PlayerController1 : MonoBehaviour {
 		}
 
 	}
-
-//	IEnumerator SpeedUpBall() {
-//		speed += speedUp;
-//		Debug.Log ("Speed: " + speed);
-//		yield return new WaitForSeconds(speedUpDuration);
-//		speed -= speedUp;
-//		Debug.Log ("Speed: " + speed);
-//	}
 		
 }
