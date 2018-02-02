@@ -5,6 +5,55 @@ using System.Collections;
 //TREE SET
 using System.Collections.Generic;
 
+public class LinkedTreeSet
+{
+	public TreeSet treeSet;
+	public LinkedTreeSet left;
+	public LinkedTreeSet right;
+
+	public LinkedTreeSet(LinkedTreeSet p, TreeSet m, LinkedTreeSet n){
+		treeSet = m;
+		left = p;
+		right = n;
+	}
+	public void create (){
+		right = new LinkedTreeSet (this, treeSet.son, null);
+		LinkedTreeSet t = this;
+		while (t.treeSet.son != null) {
+			t.right = new LinkedTreeSet (t, t.treeSet.son, null);
+			t = t.right;
+		}
+		t.right = this;
+		this.left = t.right;
+	}
+	public int size(){
+		int i = 0;
+		LinkedTreeSet t = this;
+		while (t.right != this) {
+			i++;
+			t = t.right;
+		}
+		return i + 1;
+	}
+	public string print(string text){
+		LinkedTreeSet t = this;
+		for (int i = 0; i < size (); i++) {
+			text += t.treeSet.coordinates [0] + " : " + t.treeSet.coordinates [1] + " || ";
+			t = t.right;
+		}
+		return text;
+	}
+	// O(n)
+	public LinkedTreeSet find(int x, int y){
+		LinkedTreeSet t = this;
+		for (int i = 0; i < size (); i++) {
+			if (t.treeSet.coordinates [0] == x && t.treeSet.coordinates [1] == y)
+				return t;
+			t = t.right;
+		}
+		return null;
+	}
+}
 
 public class TreeSet
 {
@@ -27,7 +76,8 @@ public class TreeSet
 	}
 
 	public string print(string text){
-		text += coordinates [0] + " : " + coordinates [1] + " - " + timeorcolor + " || ";
+		//text += coordinates [0] + " : " + coordinates [1] + " - " + timeorcolor + " || ";
+		text += coordinates [0] + " : " + coordinates [1] + " || ";
 		if (son == null)
 			return text;
 		else
@@ -51,6 +101,12 @@ public class TreeSet
 		return son.length() + 1;
 	}
 
+	public TreeSet get(int location){
+		if (location == 0)
+			return this;
+		return son.get (location - 1);
+	}
+
 	public int[,] toArray(){
 		int length = this.length ();
 		int [,] array = new int [length, 2];
@@ -63,12 +119,12 @@ public class TreeSet
 		return array;
 	}
 
-	public int[,] toOrderedArray(bool horiz){
+	public int[,] toOrderedArray(){
 		int length = this.length ();
 		int [,] array = new int [length, 2];
 		TreeSet curr = this.cloneCoord();
 		for (int i = 0; i < length; i++) {
-			TreeSet minAncestor = curr.findMinAncestor(horiz);
+			TreeSet minAncestor = curr.findMinAncestor();
 			array[i,0] = minAncestor.coordinates[0];
 			array[i,1] = minAncestor.coordinates[1];
 			curr = curr.eraseNode(minAncestor);
@@ -76,12 +132,66 @@ public class TreeSet
 		return array;
 	}
 
-	public void printArray(int[,] arr){
-		string etext = "";
-		for (int i = 0; i < arr.GetLength(0); i++) {
-			etext += arr[i,0] + " : " + arr [i,1] + " || ";
+	public TreeSet toOrderedTreeSet(){
+		int length = this.length ();
+		TreeSet ts = null;
+		TreeSet curr = this.cloneCoord();
+		for (int i = 0; i < length; i++) {
+			TreeSet minAncestor = curr.findMaxAncestor();
+			ts = new TreeSet (new int[] { minAncestor.coordinates [0], minAncestor.coordinates [1] }, ts, 0);
+			curr = curr.eraseNode(minAncestor);
 		}
-		Debug.Log (etext);
+		return ts;
+	}
+
+	public TreeSet extremesTreeSet(){
+		int length = this.length ();
+		TreeSet extremes = null;// new TreeSet (new int[]{ 100, 100 }, null, 0);
+		TreeSet curr = this;
+		TreeSet currBeginner = this; // for handling elements on the same height
+		int location = this.length () - 1;
+		while (location > 0 && this.get (location).coordinates [0] == this.coordinates [0]) {
+			currBeginner = this.get (location);
+			location = location - 1;
+		}
+		TreeSet prevTreeSet = this.get (location);
+		bool asc = prevTreeSet.coordinates [0] < curr.coordinates [0];
+
+		for (int i = 0; i <= length; i++) {
+			//Debug.Log ("prevTreeSet " + prevTreeSet + " curr " + curr);
+			if (prevTreeSet.coordinates [0] > curr.coordinates [0] && asc) {
+				TreeSet firstExtreme;
+				if (currBeginner.coordinates [1] < prevTreeSet.coordinates [1])
+					firstExtreme = currBeginner;
+				else
+					firstExtreme = prevTreeSet;
+				extremes = new TreeSet (new int[] { firstExtreme.coordinates [0], firstExtreme.coordinates [1] }, extremes, 0);
+				asc = false;
+			} else if (prevTreeSet.coordinates [0] < curr.coordinates [0] && !asc) {
+				TreeSet firstExtreme;
+				if (currBeginner.coordinates [1] < prevTreeSet.coordinates [1])
+					firstExtreme = currBeginner;
+				else
+					firstExtreme = prevTreeSet;
+				extremes = new TreeSet (new int[] { firstExtreme.coordinates [0], firstExtreme.coordinates [1] }, extremes, 0);
+				asc = true;
+			}
+
+			if (prevTreeSet.coordinates [0] != curr.coordinates [0]) {
+				currBeginner = curr;
+			}
+			//Debug.Log (i + " - " + length);
+			prevTreeSet = curr;
+			if (i == length - 1) {
+				//Debug.Log ("HERE!!!");
+				curr = this;
+			}else
+				curr = curr.next();
+		}
+		//if there are only horizontal lines
+		if (extremes == null)
+			return this;
+		return extremes;
 	}
 
 	private TreeSet cloneCoord(){
@@ -114,21 +224,30 @@ public class TreeSet
 		return this;
 	}
 
-	private TreeSet findMinAncestor(bool horiz){
+	private TreeSet findMinAncestor(){
 		TreeSet minNode = new TreeSet (new int[]{ 100, 100 }, null, 0);
 		TreeSet curr = this;
 		int length = this.length ();
 		for (int i = 0; i < length; i++) {
-			if (horiz) {
-				if (curr.coordinates [0] < minNode.coordinates [0] || (curr.coordinates [0] == minNode.coordinates [0] && curr.coordinates [1] < minNode.coordinates [1]))
-					minNode = curr;
-			} else {
-				if (curr.coordinates [1] < minNode.coordinates [1] || (curr.coordinates [1] == minNode.coordinates [1] && curr.coordinates [0] < minNode.coordinates [0]))
-					minNode = curr;
-			}
+			if (curr.coordinates [0] < minNode.coordinates [0] || (curr.coordinates [0] == minNode.coordinates [0] && curr.coordinates [1] < minNode.coordinates [1]))
+				minNode = curr;
+
 			curr = curr.next();
 		}
 		return minNode;
+	}
+
+	private TreeSet findMaxAncestor(){
+		TreeSet maxNode = new TreeSet (new int[]{ -100, -100 }, null, 0);
+		TreeSet curr = this;
+		int length = this.length ();
+		for (int i = 0; i < length; i++) {
+			if (curr.coordinates [0] > maxNode.coordinates [0] || (curr.coordinates [0] == maxNode.coordinates [0] && curr.coordinates [1] > maxNode.coordinates [1]))
+				maxNode = curr;
+
+			curr = curr.next();
+		}
+		return maxNode;
 	}
 
 	private TreeSet next(){
@@ -181,6 +300,14 @@ public class GameLogic : MonoBehaviour {
 
 	private float[,,] alphaData;
 	private TerrainData tData;
+
+	public void printArray(int[,] arr){
+		string etext = "";
+		for (int i = 0; i < arr.GetLength(0); i++) {
+			etext += arr[i,0] + " : " + arr [i,1] + " || ";
+		}
+		Debug.Log (etext);
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -487,7 +614,7 @@ public class GameLogic : MonoBehaviour {
 		}
 		if (biggestArea == 0 || GameManager.instance.players [playerID].eatArea)
 			finalColor = colorID;
-		int [,] changedCoord = checkedCoord.toOrderedArray (true);
+		int [,] changedCoord = checkedCoord.toOrderedArray ();
 		for (int i = 0; i < changedCoord.GetLength (0); i++) {
 			coordinates [changedCoord [i, 0], changedCoord [i, 1]] = finalColor;
 		}
@@ -597,7 +724,7 @@ public class GameLogic : MonoBehaviour {
 	}
 
 	int[,] getCoordinatesOptimized2 (TreeSet borderTree, bool horizRendering) {
-		int [,] border = borderTree.toOrderedArray (horizRendering);
+		int [,] border = borderTree.toOrderedArray ();
 
 		// area which will get colored
 		TreeSet colorArea = null;
@@ -632,7 +759,209 @@ public class GameLogic : MonoBehaviour {
 				}
 			}
 		}
-		return colorArea.toOrderedArray(true);
+		return colorArea.toOrderedArray();
+	}
+
+
+	int[,] getCoordinatesOptimized3 (TreeSet borderTree, bool horizRendering) {
+		int [,] border = borderTree.toOrderedArray ();
+		int [,] extremes = borderTree.extremesTreeSet().toOrderedArray();
+		//int [,] border = borderTree.toArray ();
+		Debug.Log ("whole border");
+		printArray(borderTree.toOrderedArray());
+		Debug.Log ("extremes");
+		printArray(borderTree.extremesTreeSet().toOrderedArray());
+		// area which will get colored
+		TreeSet colorArea = null;
+
+		int iExtr = 0;	
+			
+		int borderLength = border.GetLength (0);
+		int extremesLength = extremes.GetLength (0);
+		bool fillGap = false;
+		bool extreme = false;
+		bool borderB = false;
+		for (int i = 0; i < borderLength; i++) {
+			// handles begining of extreme
+			if (iExtr < extremesLength && border [i, 0] == extremes [iExtr, 0] && border [i, 1] == extremes [iExtr, 1]) {
+				if (!fillGap) {
+					Debug.Log ("NE " + border [i, 0] + " : " + border [i, 1]);
+					
+					int[] posCoor = { border [i, 0] + (fieldSize / 2), border [i, 1] + (fieldSize / 2) };
+					colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, 0] + (fieldSize / 2), border [i, 1] + (fieldSize / 2)]);
+				} else {
+					Debug.Log ("FE " + border [i, 0] + " : " + border [i, 1]);
+					for (int j = border [i - 1, 1] + 1; j <= border [i, 1]; j++) {
+						//LOGIC ------------
+						int[] posCoor = { border [i, 0] + (fieldSize / 2), j + (fieldSize / 2) };
+						colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, 0] + (fieldSize / 2), j + (fieldSize / 2)]);
+					}
+				}
+				if (i + 1 < borderLength && border [i, 0] == border [i + 1, 0] && border [i, 1] == border [i + 1, 1] - 1)
+					extreme = true;
+				iExtr++;
+
+
+			// if previous element is touching this one and also has an element on its right or if it is the end of extreme
+			} else if (i > 0 && border [i - 1, 0] == border [i, 0] && border [i - 1, 1] == border [i, 1] - 1 &&
+					(i + 1 < borderLength && border [i, 0] == border [i + 1, 0] && border [i, 1] == border [i + 1, 1] - 1 || 
+					(i + 1 < borderLength && ((border [i, 0] == border [i + 1, 0] && border [i, 1] != border [i + 1, 1] - 1) || border [i, 0] != border [i + 1, 0]) && extreme) ||
+					(i + 1 < borderLength && ((border [i, 0] == border [i + 1, 0] && border [i, 1] != border [i + 1, 1] - 1) || border [i, 0] != border [i + 1, 0]) && borderB))){
+				Debug.Log ("N " + border [i, 0] + " : " + border [i, 1]);
+				int[] posCoor = { border [i, 0] + (fieldSize / 2), border [i, 1] + (fieldSize / 2) };
+				colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, 0] + (fieldSize / 2), border [i, 1] + (fieldSize / 2)]);
+				if (i > 0 && border [i - 1, 0] == border [i, 0] && border [i - 1, 1] == border [i, 1] - 1 && 
+						i + 1 < borderLength && ((border [i, 0] == border [i + 1, 0] && border [i, 1] != border [i + 1, 1] - 1) || border [i, 0] != border [i + 1, 0]) && extreme)
+					extreme = false;
+				if (i > 0 && border [i - 1, 0] == border [i, 0] && border [i - 1, 1] == border [i, 1] - 1 && 
+						i + 1 < borderLength && ((border [i, 0] == border [i + 1, 0] && border [i, 1] != border [i + 1, 1] - 1) || border [i, 0] != border [i + 1, 0]) && borderB)
+					borderB = false;
+
+			} else {
+				// if it is the first element or if the line is switched or if not fill gap
+				if (i == 0 || i > 0 && border [i - 1, 0] != border [i, 0] || !fillGap) {
+					Debug.Log ("NB " + border [i, 0] + " : " + border [i, 1]);
+					int[] posCoor = { border [i, 0] + (fieldSize / 2), border [i, 1] + (fieldSize / 2) };
+					colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, 0] + (fieldSize / 2), border [i, 1] + (fieldSize / 2)]);
+					fillGap = !fillGap;
+
+				} else {
+					Debug.Log ("FB " + border [i, 0] + " : " + border [i, 1]);
+					for (int j = border [i - 1, 1] + 1; j <= border [i, 1]; j++) {
+						//LOGIC ------------
+						int[] posCoor = { border [i, 0] + (fieldSize / 2), j + (fieldSize / 2) };
+						colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, 0] + (fieldSize / 2), j + (fieldSize / 2)]);
+					}
+					fillGap = !fillGap;
+				}
+				borderB = true;
+//				// handles border elements that are drawn in a line before inner elements 
+//				if (i + 1 < borderLength && border [i, 0] == border [i + 1, 0] && border [i, 1] == border [i + 1, 1] - 1) {
+//					while (i + 1 < borderLength && border [i, 0] == border [i + 1, 0] && border [i, 1] == border [i + 1, 1] - 1) {
+//						int[] posCoor2 = { border [i + 1, 0] + (fieldSize / 2), border [i + 1, 1] + (fieldSize / 2) };
+//						colorArea = new TreeSet (posCoor2, colorArea, coordinates [border [i + 1, 0] + (fieldSize / 2), border [i + 1, 1] + (fieldSize / 2)]);
+//						i++;
+//					}
+//					i--;
+//				}
+//
+//				//handles inner elements
+//				for (int j = border [i, 1]; j <= border [i + 1, 1]; j++) {
+//					//LOGIC ------------
+//					int[] posCoor = { border [i, 0] + (fieldSize / 2), j + (fieldSize / 2) };
+//					colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, 0] + (fieldSize / 2), j + (fieldSize / 2)]);
+//
+//				}
+			}
+
+//			// handles border elements in a line after extreme or inner elements
+//			while (i + 1 < borderLength && border [i, 0] == border [i + 1, 0] && border [i, 1] == border [i + 1, 1] - 1) {
+//				int[] posCoor2 = { border [i + 1, 0] + (fieldSize / 2), border [i + 1, 1] + (fieldSize / 2) };
+//				colorArea = new TreeSet (posCoor2, colorArea, coordinates [border [i + 1, 0] + (fieldSize / 2), border [i + 1, 1] + (fieldSize / 2)]);
+//				i++;
+//			}
+
+
+
+
+//			// variable which tells us if next element of border is in the same column
+//			bool endsInSameLine = i + 1 < borderLength && border [i, n1] == border [i + 1, n1];
+//			// variable that tells us the last column to color
+//			int endCol = border [i, n2];
+//			if (endsInSameLine){
+//				endCol = border [i + 1, n2];
+//			}
+//			for (int j = border [i, n2]; j <= endCol; j++) {
+//				//LOGIC ------------
+//				int[] posCoor = { border [i, n1] + (fieldSize / 2), j + (fieldSize / 2) };
+//				colorArea = new TreeSet (posCoor, colorArea, coordinates [border [i, n1] + (fieldSize / 2), j + (fieldSize / 2)]);
+//
+//			}
+		}
+		return colorArea.toOrderedArray();
+	}
+
+	int[,] getCoordinatesOptimized4 (TreeSet borderTree, bool horizRendering) {
+		int [,] border = borderTree.toOrderedArray ();
+		int [,] extremes = borderTree.extremesTreeSet().toOrderedArray();
+
+		Debug.Log ("FROM HERE!!!");
+
+		LinkedTreeSet borderLinkedTreeSet = new LinkedTreeSet (null, borderTree, null);
+		borderLinkedTreeSet.create ();
+
+
+		//Debug.Log (borderTree.print(""));
+		Debug.Log ("Whole border:");
+		Debug.Log (borderLinkedTreeSet.print(""));
+		//Debug.Log (borderLinkedTreeSet.find(extremes[0,0], extremes[0,1]).print(""));
+
+		//Debug.Log (borderTree.extremesTreeSet ().toOrderedTreeSet ().print (""));
+		Debug.Log ("All extremes:");
+		printArray(extremes);
+
+		TreeSet colorArea = null;
+
+		// first extreme
+		TreeSet extreme = borderTree.extremesTreeSet ().toOrderedTreeSet ();
+
+		while (borderLinkedTreeSet != null) {
+			
+			// start position
+			LinkedTreeSet l = borderLinkedTreeSet.find (extreme.coordinates [0], extreme.coordinates [1]);
+			LinkedTreeSet r = borderLinkedTreeSet.find (extreme.coordinates [0], extreme.coordinates [1]);
+
+			//remove first extreme
+			extreme = extreme.son;
+
+			int h = l.treeSet.coordinates [0];
+
+			Debug.Log ("A");
+			// find the leftish neighbour in the same line
+			int numb = 0;
+			while (h == l.left.treeSet.coordinates [0]) {
+				l = l.left;
+				Debug.Log (l.treeSet.coordinates[0] + ":" + l.treeSet.coordinates[1]);
+				// ERASE THIS (CAUSE OF UNEXPECTED BEHAVIOUR)
+				if (numb >= 10) {
+					Debug.Log ("NOOOO!!!!");
+					break;
+
+				}
+				numb += 1;
+				//break;
+			}
+
+			Debug.Log ("AAA");
+			numb = 0;
+			// find the rightish neighbour in the same line
+			while (h == r.right.treeSet.coordinates [0]) {
+				r = r.right;
+				Debug.Log (r.treeSet.coordinates[0] + ":" + r.treeSet.coordinates[1]);
+				// ERASE THIS (CAUSE OF UNEXPECTED BEHAVIOUR)
+				if (numb >= 10) {
+					Debug.Log ("NOOOO!!!!");
+					break;
+
+				}
+				numb += 1;
+			}
+
+			Debug.Log ("Right coordinates");
+			Debug.Log (r.treeSet.coordinates);
+
+			Debug.Log ("Left coordinates");
+			Debug.Log (l.treeSet.coordinates);
+			Debug.Log ("HERE!!!");
+			break;
+			//int[] posCoor = { border [i, n1] + (fieldSize / 2), j + (fieldSize / 2) };
+			//colorArea = new TreeSet (posCoor, colorArea, 0);
+		}
+
+
+
+
+		return null;
 	}
 
 	// RETURNS POSITION ON OUR MAP FROM PLAYER

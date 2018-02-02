@@ -1,0 +1,68 @@
+IDEA A:
+Basic algorithm idea:
+-Get global minimum
+-move from there to left and right
+-when changing height fill with color everything in between
+
+Possible options end of fill causes:
+a) extreme on either one side
+b) extreme in the middle
+c) extreme in the middle and one side
+d) extreme in the middle and on both sides
+e) extremes on both sides
+f) same extreme on both sides
+
+RESOLUTION 1:
+ITERATIVE SOLUTION
+Resolutions of end of fillment causes:
+a) 
+	append extreme to border 
+	+ find next extreme NO! (SPIRALE COUNTER EXAMPLE)
+	+ find next global minimum NO! (YOU WILL LOOSE IDEA OF 
+					WHICH SIDE OF BORDER TO COLOR)
+	+ repeat the procedure from that extreme
+b)
+
+PROBLEM OF RESOLUTION 1:
+After encountering extreme on either side how to determine where to start
+filling color next?
+
+
+RESOLUTION 2:
+RECURSIVE SOLUTION
+a)
+	append extreme to border
+	+ start recursion with left border point that is 1 point higher than
+		extreme and right point in extreme (or the other way around)
+b)
+	append extreme to both borders
+	+ append extreme to extremes on both sides
+	+ add extreme to both sides
+	+ start recursion containing elements left of extreme between sides
+		with element of extreme (also divide extremes to two parts)
+	+ start recursion containing elements right of extreme between sides
+		with element of extreme (also divide extremes to two parts)
+c)
+	append extremes to both borders
+	+ append extreme to ONE side that does NOT have extreme on side
+	+ start recursion containing elements left of extreme between sides
+		with element of extreme (also divide extremes to two parts)
+	+ start recursion containing elements right of extreme between sides
+		with element of extreme (also divide extremes to two parts)
+d)
+	append extremes to both borders
+	+ do NOT append extreme to extremes
+	+ start recursion containing elements left of extreme between sides
+		with element of extreme (also divide extremes to two parts)
+	+ start recursion containing elements right of extreme between sides
+		with element of extreme (also divide extremes to two parts)
+e)
+	add extreme to border
+	+ append 1 extreme to recursion and delete the other
+	+ start recursion
+f)
+	end recursion and return filled elements
+
+RECURSION:
+find global minimum compare height of it with left and right borders
+-from lower point start filling borders
